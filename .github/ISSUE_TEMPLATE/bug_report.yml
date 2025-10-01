@@ -1,0 +1,136 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the information below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear description of the bug
+      placeholder: When I run cycfix, it fails to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: file-structure
+    attributes:
+      label: File Structure (sanitized)
+      description: Share relevant parts of your project structure
+      placeholder: |
+        src/
+          services/
+            userService.ts
+            orderService.ts
+          models/
+            user.ts
+            order.ts
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: command
+    attributes:
+      label: Command Used
+      description: What command did you run?
+      placeholder: cycfix --fix --path src/
+      render: bash
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened (include error messages)
+      placeholder: |
+        Error: Failed to analyze dependencies
+        ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: cyclic-dependency-fixer Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js Version
+      placeholder: "v20.10.0"
+    validations:
+      required: true
+
+  - type: input
+    id: typescript-version
+    attributes:
+      label: TypeScript Version
+      placeholder: "5.3.3"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - WSL2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: bundler
+    attributes:
+      label: Bundler (if applicable)
+      options:
+        - Not using a bundler
+        - Webpack
+        - Rollup
+        - Vite
+        - esbuild
+        - Parcel
+        - Other
+    validations:
+      required: false
+
+  - type: dropdown
+    id: monorepo
+    attributes:
+      label: Monorepo Tool (if applicable)
+      options:
+        - Not using a monorepo
+        - Nx
+        - Lerna
+        - Turborepo
+        - Yarn Workspaces
+        - npm Workspaces
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information

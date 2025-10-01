@@ -1,0 +1,100 @@
+{
+  "name": "cyclic-dependency-fixer",
+  "version": "1.0.0",
+  "description": "Automatically detect and fix circular dependencies in JavaScript/TypeScript projects with AST-based refactoring, Webpack/Rollup/Vite integration, and automated code quality improvements",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "cycfix": "dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
+  },
+  "keywords": [
+    "circular-dependency",
+    "cyclic-dependency",
+    "dependency-analysis",
+    "code-quality",
+    "refactoring",
+    "typescript",
+    "javascript",
+    "static-analysis",
+    "ast",
+    "codemod",
+    "code-smell",
+    "technical-debt",
+    "architecture",
+    "dependency-graph",
+    "module-dependency",
+    "import-analysis",
+    "webpack",
+    "webpack-plugin",
+    "rollup",
+    "vite",
+    "bundler",
+    "build-tools",
+    "linting",
+    "code-analysis",
+    "automated-refactoring",
+    "dependency-injection",
+    "monorepo",
+    "nx",
+    "lerna",
+    "turborepo",
+    "eslint",
+    "tslint",
+    "nodejs",
+    "node",
+    "cli",
+    "developer-tools",
+    "devtools",
+    "code-maintenance",
+    "software-architecture",
+    "clean-code"
+  ],
+  "author": "Ashish Yadav <ashish.yd@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashishyd/cyclic-dependency-fixer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ashishyd/cyclic-dependency-fixer/issues"
+  },
+  "homepage": "https://github.com/ashishyd/cyclic-dependency-fixer#readme",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.10.6",
+    "@typescript-eslint/eslint-plugin": "^6.17.0",
+    "@typescript-eslint/parser": "^6.17.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "jest": "^29.7.0",
+    "prettier": "^3.1.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

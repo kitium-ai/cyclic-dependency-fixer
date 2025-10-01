@@ -1,0 +1,22 @@
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/tests'],
+  testMatch: ['**/*.test.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.types.ts',
+    '!src/**/*.interface.ts',
+    '!src/cli/index.ts',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 50,
+      functions: 70,
+      lines: 75,
+      statements: 75,
+    },
+  },
+  coverageDirectory: 'coverage',
+  verbose: true,
+};
