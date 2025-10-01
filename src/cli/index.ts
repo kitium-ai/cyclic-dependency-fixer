@@ -4,12 +4,14 @@
  * CLI entry point for cyclic-dependency-fixer
  */
 
+import { config as loadEnv } from 'dotenv';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import * as path from 'path';
 import { DetectCyclesUseCase } from '../application/DetectCyclesUseCase';
 import { FixCyclesUseCase } from '../application/FixCyclesUseCase';
+import { AIEnhancedFixCyclesUseCase, AIFixOptions } from '../application/AIEnhancedFixCyclesUseCase';
 import { NodeFileSystem } from '../infrastructure/filesystem/NodeFileSystem';
 import { JavaScriptParser } from '../infrastructure/parsers/JavaScriptParser';
 import { TarjanCycleDetector } from '../infrastructure/graph/TarjanCycleDetector';
@@ -17,6 +19,11 @@ import { DynamicImportStrategy } from '../application/fix-strategies/DynamicImpo
 import { ExtractSharedStrategy } from '../application/fix-strategies/ExtractSharedStrategy';
 import { ResultFormatter } from './formatters/ResultFormatter';
 import { AnalysisConfig, FixOptions } from '../domain/models/types';
+import { AIProviderFactory } from '../infrastructure/ai/AIProviderFactory';
+import { AIProviderType } from '../domain/interfaces/IAIProvider';
+
+// Load environment variables
+loadEnv();
 
 const program = new Command();
 
@@ -54,6 +61,11 @@ program
   .option('--dry-run', 'Preview fixes without modifying files', false)
   .option('--no-backup', 'Do not create backup files', false)
   .option('--auto', 'Automatically apply fixes without confirmation', false)
+  .option('--ai', 'Use AI-powered analysis and recommendations', false)
+  .option('--ai-provider <provider>', 'AI provider (anthropic|openai)', 'anthropic')
+  .option('--ai-key <key>', 'AI API key (or set ANTHROPIC_API_KEY/OPENAI_API_KEY env var)', '')
+  .option('--explain', 'Generate AI-powered explanations', false)
+  .option('--generate-code', 'Generate AI-powered refactoring code', false)
   .action(async (options) => {
     await runFix(options);
   });
@@ -129,13 +141,49 @@ async function runFix(options: any): Promise<void> {
 
     const strategies = [new DynamicImportStrategy(), new ExtractSharedStrategy()];
 
-    const fixUseCase = new FixCyclesUseCase(fileSystem, strategies);
+    // Determine if AI should be used
+    const useAI = options.ai || options.explain || options.generateCode;
 
-    const fixOptions: FixOptions = {
+    // Create AI provider if needed
+    let aiProvider;
+    if (useAI) {
+      const providerType = options.aiProvider === 'openai' ? AIProviderType.OPENAI : AIProviderType.ANTHROPIC;
+
+      if (options.aiKey) {
+        aiProvider = AIProviderFactory.create({
+          provider: providerType,
+          apiKey: options.aiKey,
+        });
+      } else {
+        aiProvider = AIProviderFactory.createFromEnv();
+      }
+
+      if (!aiProvider.isAvailable()) {
+        spinner.warn(chalk.yellow('AI features requested but no API key configured'));
+        console.log(chalk.yellow('Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key'));
+        console.log('');
+        aiProvider = AIProviderFactory.create({ provider: AIProviderType.NONE });
+      } else {
+        spinner.info(chalk.cyan(`🤖 AI-powered analysis enabled (${aiProvider.name})`));
+        console.log('');
+      }
+    } else {
+      aiProvider = AIProviderFactory.create({ provider: AIProviderType.NONE });
+    }
+
+    // Choose use case based on AI availability
+    const fixUseCase = useAI && aiProvider.isAvailable()
+      ? new AIEnhancedFixCyclesUseCase(fileSystem, strategies, aiProvider)
+      : new FixCyclesUseCase(fileSystem, strategies);
+
+    const fixOptions: AIFixOptions = {
       autoFix: options.auto,
       strategies: [],
       backup: options.backup !== false,
       dryRun: options.dryRun,
+      useAI: useAI && aiProvider.isAvailable(),
+      explainWithAI: options.explain && aiProvider.isAvailable(),
+      generateCode: options.generateCode && aiProvider.isAvailable(),
     };
 
     const modules = new Map();

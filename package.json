@@ -1,7 +1,7 @@
 {
   "name": "cyclic-dependency-fixer",
-  "version": "1.0.0",
-  "description": "Automatically detect and fix circular dependencies in JavaScript/TypeScript projects with AST-based refactoring, Webpack/Rollup/Vite integration, and automated code quality improvements",
+  "version": "2.0.0",
+  "description": "AI-powered tool to detect and fix circular dependencies in JavaScript/TypeScript projects. Features intelligent refactoring with Claude/GPT-4, codebase pattern learning, and context-aware fix recommendations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -63,7 +63,17 @@
     "devtools",
     "code-maintenance",
     "software-architecture",
-    "clean-code"
+    "clean-code",
+    "ai",
+    "ai-powered",
+    "artificial-intelligence",
+    "machine-learning",
+    "claude",
+    "gpt",
+    "openai",
+    "anthropic",
+    "intelligent-refactoring",
+    "smart-analysis"
   ],
   "author": "Ashish Yadav <ashish.yd@gmail.com>",
   "license": "MIT",
@@ -79,8 +89,11 @@
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
     "chalk": "^4.1.2",
     "commander": "^11.1.0",
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0",
     "ora": "^5.4.1"
   },
   "devDependencies": {

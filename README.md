@@ -8,9 +8,9 @@
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ashishyd/cyclic-dependency-fixer/pulls)
 [![GitHub stars](https://img.shields.io/github/stars/ashishyd/cyclic-dependency-fixer.svg?style=social)](https://github.com/ashishyd/cyclic-dependency-fixer)
 
-🔄 **Detect and automatically fix cyclic dependencies in JavaScript/TypeScript projects**
+🔄 **Detect and automatically fix cyclic dependencies in JavaScript/TypeScript projects with AI-powered analysis**
 
-`cyclic-dependency-fixer` is a lightweight, powerful tool that not only detects circular dependencies but also provides intelligent auto-fix strategies and actionable manual steps when automatic fixes aren't possible.
+`cyclic-dependency-fixer` is a lightweight, powerful tool that not only detects circular dependencies but also provides intelligent auto-fix strategies powered by AI (Claude, GPT-4). Get context-aware recommendations, automated refactoring code, and actionable insights.
 
 ---
 
@@ -18,6 +18,8 @@
 
 - [Features](#-features)
 - [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [AI-Powered Features](#-ai-powered-features)
 - [Usage](#-usage)
 - [Fix Strategies](#-fix-strategies)
 - [Output Example](#-output-example)
@@ -33,6 +35,7 @@
 
 ## ✨ Features
 
+### Core Features
 - 🔍 **Fast Detection** - Uses Tarjan's algorithm for efficient cycle detection (O(V + E))
 - 🛠️ **Auto-Fix Strategies** - Attempts to automatically fix cycles when safe
 - 📝 **Manual Fix Guidance** - Provides clear, actionable steps when auto-fix isn't possible
@@ -41,6 +44,14 @@
 - 🔌 **Extensible** - Clean architecture allows custom fix strategies
 - 💪 **Type-Safe** - Written in TypeScript with strict typing
 - 🪶 **Lightweight** - Minimal dependencies, uses regex-based parsing
+
+### 🤖 AI-Powered Features (NEW!)
+- **Smart Strategy Selection** - AI analyzes your code and recommends the best fix strategy
+- **Codebase Pattern Learning** - Understands your architecture and coding patterns
+- **Intelligent Refactoring** - Generates production-ready refactoring code
+- **Root Cause Analysis** - Explains WHY circular dependencies exist
+- **Context-Aware Suggestions** - Recommendations tailored to your codebase
+- **Multiple AI Providers** - Support for Claude (Anthropic) and GPT-4 (OpenAI)
 
 ## 🚀 Installation
 
@@ -52,6 +63,189 @@ Or use locally in your project:
 
 ```bash
 npm install --save-dev cyclic-dependency-fixer
+```
+
+## ⚡ Quick Start
+
+### Basic Usage (No AI)
+
+```bash
+# Detect circular dependencies
+cycfix detect
+
+# Attempt to fix them automatically
+cycfix fix --dry-run  # Preview changes
+cycfix fix             # Apply fixes
+```
+
+### With AI-Powered Analysis
+
+```bash
+# Set up your API key (one-time)
+export ANTHROPIC_API_KEY=sk-ant-xxx  # or OPENAI_API_KEY
+
+# Run with AI-powered recommendations
+cycfix fix --ai --generate-code
+
+# Get detailed AI explanations
+cycfix fix --ai --explain --generate-code
+```
+
+## 🤖 AI-Powered Features
+
+### Why Use AI?
+
+Traditional static analysis can detect cycles but struggles with context. AI understands:
+- **Semantic relationships** between modules
+- **Your codebase's architecture** (layered, hexagonal, clean architecture, etc.)
+- **Common patterns** you use (dependency injection, factory pattern, etc.)
+- **Why cycles exist** (shared types, bidirectional relationships, etc.)
+
+### Setup
+
+1. **Get an API Key** (choose one):
+   - **Claude (Anthropic)**: https://console.anthropic.com/
+   - **GPT-4 (OpenAI)**: https://platform.openai.com/api-keys
+
+2. **Set Environment Variable**:
+   ```bash
+   # For Claude (recommended)
+   export ANTHROPIC_API_KEY=sk-ant-xxx
+
+   # Or for GPT-4
+   export OPENAI_API_KEY=sk-xxx
+   ```
+
+3. **Or use CLI flag**:
+   ```bash
+   cycfix fix --ai --ai-key sk-ant-xxx
+   ```
+
+### AI Features
+
+#### 1. Smart Strategy Selection
+
+AI analyzes your code and recommends the best fix strategy:
+
+```bash
+cycfix fix --ai
+```
+
+**Output:**
+```
+🤖 Analyzing codebase patterns with AI...
+   Architecture: Clean Architecture (Layered)
+   Patterns found: 3
+
+🤖 Getting AI recommendation for cycle abc123...
+   Recommended: extract-shared (85% confidence)
+   Reasoning: Both UserService and OrderService depend on shared types.
+              Creating a shared types module maintains your layered architecture.
+```
+
+#### 2. Intelligent Code Generation
+
+Get production-ready refactoring code:
+
+```bash
+cycfix fix --ai --generate-code
+```
+
+**Output:**
+```
+📝 Manual steps to fix:
+
+1. Create shared types module
+   File: src/shared/types/user-order.types.ts
+
+   export interface UserId {
+     readonly id: string;
+   }
+
+   export interface OrderReference {
+     readonly userId: UserId;
+     readonly orderId: string;
+   }
+
+2. Update UserService imports
+   File: src/services/user.service.ts
+   Line: 3
+
+   - import { OrderReference } from './order.service'
+   + import { OrderReference } from '../shared/types/user-order.types'
+```
+
+#### 3. Root Cause Analysis
+
+Understand WHY cycles exist:
+
+```bash
+cycfix fix --ai --explain
+```
+
+**Output:**
+```
+AI Analysis:
+
+This circular dependency exists because:
+
+1. UserService needs to track user orders (OrderReference type)
+2. OrderService needs to validate users (UserId type)
+3. Both services define types the other needs
+
+Root Cause: Shared domain types without a common module
+
+Impact:
+- Prevents tree-shaking
+- Can cause runtime initialization errors
+- Makes testing harder (mocking circular deps)
+
+Prevention:
+- Create a shared types layer (src/types/)
+- Follow the Dependency Inversion Principle
+- Use interfaces to define contracts
+```
+
+#### 4. Architecture-Aware Recommendations
+
+AI adapts to YOUR codebase patterns:
+
+```
+✓ Detected: You use dependency injection in 80% of services
+✓ Detected: Layered architecture with clear boundaries
+✓ Detected: Barrel files (index.ts) for public APIs
+
+Recommendation: Use dependency injection pattern to break this cycle,
+as it aligns with your existing architecture.
+```
+
+### AI CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--ai` | Enable AI-powered analysis |
+| `--ai-provider <provider>` | Choose provider: `anthropic` or `openai` (default: anthropic) |
+| `--ai-key <key>` | Provide API key directly (or use env var) |
+| `--explain` | Generate AI explanations of why cycles exist |
+| `--generate-code` | Generate complete refactoring code with AI |
+
+### Example Workflow
+
+```bash
+# 1. Detect with AI analysis
+cycfix fix --ai --dry-run
+
+# 2. Review AI recommendations
+# AI will show:
+# - Detected architecture
+# - Recommended strategy with confidence score
+# - Reasoning for the recommendation
+
+# 3. Generate refactoring code
+cycfix fix --ai --generate-code --dry-run
+
+# 4. Apply fixes
+cycfix fix --ai --generate-code
 ```
 
 ## 📖 Usage
