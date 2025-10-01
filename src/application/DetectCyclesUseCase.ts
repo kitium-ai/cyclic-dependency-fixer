@@ -41,14 +41,7 @@ export class DetectCyclesUseCase {
 
   private async findFiles(config: AnalysisConfig): Promise<readonly ModulePath[]> {
     const patterns = config.extensions.map((ext) => `*${ext}`);
-    const exclude = [
-      ...config.exclude,
-      'node_modules',
-      'dist',
-      'build',
-      'coverage',
-      '.git',
-    ];
+    const exclude = [...config.exclude, 'node_modules', 'dist', 'build', 'coverage', '.git'];
 
     if (!config.includeNodeModules) {
       exclude.push('node_modules');
@@ -57,7 +50,9 @@ export class DetectCyclesUseCase {
     return await this.fileSystem.glob(patterns, exclude);
   }
 
-  private async parseModules(files: readonly ModulePath[]): Promise<ReadonlyMap<ModulePath, Module>> {
+  private async parseModules(
+    files: readonly ModulePath[],
+  ): Promise<ReadonlyMap<ModulePath, Module>> {
     const modules = new Map<ModulePath, Module>();
 
     await Promise.all(

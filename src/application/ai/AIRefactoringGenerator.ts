@@ -4,13 +4,7 @@
  */
 
 import { IAIProvider } from '../../domain/interfaces/IAIProvider';
-import {
-  Cycle,
-  Module,
-  ModulePath,
-  FixStrategy,
-  ManualStep,
-} from '../../domain/models/types';
+import { Cycle, Module, ModulePath, FixStrategy, ManualStep } from '../../domain/models/types';
 import { IFileSystem } from '../../domain/interfaces/IFileSystem';
 
 export interface RefactoringCode {
@@ -107,10 +101,7 @@ Respond in JSON format:
     }));
   }
 
-  async explainCycle(
-    cycle: Cycle,
-    modules: ReadonlyMap<ModulePath, Module>,
-  ): Promise<string> {
+  async explainCycle(cycle: Cycle, modules: ReadonlyMap<ModulePath, Module>): Promise<string> {
     if (!this.aiProvider.isAvailable()) {
       return 'AI analysis not available. Configure an AI provider to get detailed explanations.';
     }
@@ -161,11 +152,7 @@ Provide a clear, concise explanation for developers.`;
     return codeSnippets.join('\n\n// ============================================\n\n');
   }
 
-  private buildRefactoringPrompt(
-    cycle: Cycle,
-    cycleCode: string,
-    strategy: FixStrategy,
-  ): string {
+  private buildRefactoringPrompt(cycle: Cycle, cycleCode: string, strategy: FixStrategy): string {
     const strategyDescription = this.getStrategyDescription(strategy);
 
     return `Generate complete refactoring code to fix this circular dependency using the ${strategy} strategy.

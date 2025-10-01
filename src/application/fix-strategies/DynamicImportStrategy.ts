@@ -158,7 +158,11 @@ export class DynamicImportStrategy implements IFixStrategy {
   private findFirstUsage(lines: string[], identifiers: string[]): number {
     for (let i = 0; i < lines.length; i++) {
       for (const identifier of identifiers) {
-        const id = identifier.split(/\s+as\s+/).pop()?.trim() || identifier;
+        const id =
+          identifier
+            .split(/\s+as\s+/)
+            .pop()
+            ?.trim() || identifier;
         if (lines[i].includes(id)) {
           return i;
         }

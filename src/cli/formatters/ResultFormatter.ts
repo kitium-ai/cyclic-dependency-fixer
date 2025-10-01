@@ -27,11 +27,11 @@ export class ResultFormatter {
 
     // Cycles found
     lines.push(
-      chalk.red(`✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`),
+      chalk.red(
+        `✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`,
+      ),
     );
-    lines.push(
-      `Affected modules: ${chalk.yellow(result.affectedModules.length.toString())}`,
-    );
+    lines.push(`Affected modules: ${chalk.yellow(result.affectedModules.length.toString())}`);
     lines.push('');
 
     // Detail each cycle
@@ -63,9 +63,7 @@ export class ResultFormatter {
     cycle.edges.forEach((edge) => {
       const fromFile = path.relative(rootDir, edge.from);
       const toFile = path.relative(rootDir, edge.to);
-      lines.push(
-        chalk.gray(`    ${fromFile}:${edge.importInfo.line} imports ${toFile}`),
-      );
+      lines.push(chalk.gray(`    ${fromFile}:${edge.importInfo.line} imports ${toFile}`));
     });
 
     return lines.join('\n');
@@ -127,10 +125,7 @@ export class ResultFormatter {
     return lines.join('\n');
   }
 
-  formatSummary(
-    analysisResult: AnalysisResult,
-    fixResults: readonly FixResult[],
-  ): string {
+  formatSummary(analysisResult: AnalysisResult, fixResults: readonly FixResult[]): string {
     const lines: string[] = [];
 
     lines.push('');

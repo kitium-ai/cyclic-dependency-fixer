@@ -6,13 +6,7 @@
 import { IFileSystem } from '../domain/interfaces/IFileSystem';
 import { IFixStrategy } from '../domain/interfaces/IFixStrategy';
 import { IAIProvider } from '../domain/interfaces/IAIProvider';
-import {
-  Cycle,
-  FixOptions,
-  FixResult,
-  Module,
-  ModulePath,
-} from '../domain/models/types';
+import { Cycle, FixOptions, FixResult, Module, ModulePath } from '../domain/models/types';
 import { CodebasePatternAnalyzer } from './ai/CodebasePatternAnalyzer';
 import { AIStrategySelector } from './ai/AIStrategySelector';
 import { AIRefactoringGenerator } from './ai/AIRefactoringGenerator';
@@ -83,7 +77,9 @@ export class AIEnhancedFixCyclesUseCase {
       );
 
       if (aiRecommendation) {
-        console.log(`   Recommended: ${aiRecommendation.strategy} (${aiRecommendation.confidence}% confidence)`);
+        console.log(
+          `   Recommended: ${aiRecommendation.strategy} (${aiRecommendation.confidence}% confidence)`,
+        );
         console.log(`   Reasoning: ${aiRecommendation.reasoning}`);
       }
     }
@@ -101,7 +97,7 @@ export class AIEnhancedFixCyclesUseCase {
     }
 
     // Try strategies in order
-    for (const { strategy, score } of applicableStrategies) {
+    for (const { strategy } of applicableStrategies) {
       try {
         const result = await strategy.fix(cycle, modules, this.fileSystem, options.dryRun);
 
@@ -242,7 +238,7 @@ export class AIEnhancedFixCyclesUseCase {
       );
 
       if (aiSteps.length > 0) {
-        manualSteps = aiSteps;
+        manualSteps = [...aiSteps];
       }
     }
 

@@ -31,7 +31,10 @@ export class NodeFileSystem implements IFileSystem {
     }
   }
 
-  async glob(patterns: readonly string[], exclude: readonly string[]): Promise<readonly ModulePath[]> {
+  async glob(
+    patterns: readonly string[],
+    exclude: readonly string[],
+  ): Promise<readonly ModulePath[]> {
     const results: ModulePath[] = [];
     const excludeSet = new Set(exclude);
 

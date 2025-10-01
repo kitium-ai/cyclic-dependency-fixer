@@ -5,13 +5,7 @@
 
 import { IFileSystem } from '../domain/interfaces/IFileSystem';
 import { IFixStrategy } from '../domain/interfaces/IFixStrategy';
-import {
-  Cycle,
-  FixOptions,
-  FixResult,
-  Module,
-  ModulePath,
-} from '../domain/models/types';
+import { Cycle, FixOptions, FixResult, Module, ModulePath } from '../domain/models/types';
 
 export class FixCyclesUseCase {
   constructor(
@@ -52,12 +46,7 @@ export class FixCyclesUseCase {
     // Try strategies in order
     for (const { strategy } of applicableStrategies) {
       try {
-        const result = await strategy.fix(
-          cycle,
-          modules,
-          this.fileSystem,
-          options.dryRun,
-        );
+        const result = await strategy.fix(cycle, modules, this.fileSystem, options.dryRun);
 
         // If successful or has manual steps, return
         if (result.success || result.manualSteps) {
@@ -102,7 +91,7 @@ export class FixCyclesUseCase {
   private createNoStrategyResult(cycle: Cycle): FixResult {
     return {
       cycle,
-      strategy: cycle.paths.length === 2 ? cycle.paths[0] as any : null as any,
+      strategy: cycle.paths.length === 2 ? (cycle.paths[0] as any) : (null as any),
       success: false,
       modifiedFiles: [],
       createdFiles: [],

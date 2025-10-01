@@ -59,36 +59,44 @@ export class JavaScriptParser implements IParser {
     const cleanContent = this.removeComments(content);
 
     // Extract static imports
-    imports.push(...(await this.extractPattern(
-      cleanContent,
-      JavaScriptParser.IMPORT_PATTERNS.staticImport,
-      ImportType.STATIC,
-      filePath,
-    )));
+    imports.push(
+      ...(await this.extractPattern(
+        cleanContent,
+        JavaScriptParser.IMPORT_PATTERNS.staticImport,
+        ImportType.STATIC,
+        filePath,
+      )),
+    );
 
     // Extract dynamic imports
-    imports.push(...(await this.extractPattern(
-      cleanContent,
-      JavaScriptParser.IMPORT_PATTERNS.dynamicImport,
-      ImportType.DYNAMIC,
-      filePath,
-    )));
+    imports.push(
+      ...(await this.extractPattern(
+        cleanContent,
+        JavaScriptParser.IMPORT_PATTERNS.dynamicImport,
+        ImportType.DYNAMIC,
+        filePath,
+      )),
+    );
 
     // Extract require statements
-    imports.push(...(await this.extractPattern(
-      cleanContent,
-      JavaScriptParser.IMPORT_PATTERNS.require,
-      ImportType.REQUIRE,
-      filePath,
-    )));
+    imports.push(
+      ...(await this.extractPattern(
+        cleanContent,
+        JavaScriptParser.IMPORT_PATTERNS.require,
+        ImportType.REQUIRE,
+        filePath,
+      )),
+    );
 
     // Extract export-from statements
-    imports.push(...(await this.extractPattern(
-      cleanContent,
-      JavaScriptParser.IMPORT_PATTERNS.exportFrom,
-      ImportType.EXPORT_FROM,
-      filePath,
-    )));
+    imports.push(
+      ...(await this.extractPattern(
+        cleanContent,
+        JavaScriptParser.IMPORT_PATTERNS.exportFrom,
+        ImportType.EXPORT_FROM,
+        filePath,
+      )),
+    );
 
     return imports;
   }
@@ -165,9 +173,12 @@ export class JavaScriptParser implements IParser {
     // Named imports: import { a, b } from 'y'
     const namedMatch = /\{([^}]+)\}/.exec(importStatement);
     if (namedMatch) {
-      const names = namedMatch[1]
-        .split(',')
-        .map((name) => name.trim().split(/\s+as\s+/)[0].trim());
+      const names = namedMatch[1].split(',').map((name) =>
+        name
+          .trim()
+          .split(/\s+as\s+/)[0]
+          .trim(),
+      );
       identifiers.push(...names);
     }
 

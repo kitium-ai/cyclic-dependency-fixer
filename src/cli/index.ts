@@ -11,14 +11,17 @@ import ora from 'ora';
 import * as path from 'path';
 import { DetectCyclesUseCase } from '../application/DetectCyclesUseCase';
 import { FixCyclesUseCase } from '../application/FixCyclesUseCase';
-import { AIEnhancedFixCyclesUseCase, AIFixOptions } from '../application/AIEnhancedFixCyclesUseCase';
+import {
+  AIEnhancedFixCyclesUseCase,
+  AIFixOptions,
+} from '../application/AIEnhancedFixCyclesUseCase';
 import { NodeFileSystem } from '../infrastructure/filesystem/NodeFileSystem';
 import { JavaScriptParser } from '../infrastructure/parsers/JavaScriptParser';
 import { TarjanCycleDetector } from '../infrastructure/graph/TarjanCycleDetector';
 import { DynamicImportStrategy } from '../application/fix-strategies/DynamicImportStrategy';
 import { ExtractSharedStrategy } from '../application/fix-strategies/ExtractSharedStrategy';
 import { ResultFormatter } from './formatters/ResultFormatter';
-import { AnalysisConfig, FixOptions } from '../domain/models/types';
+import { AnalysisConfig } from '../domain/models/types';
 import { AIProviderFactory } from '../infrastructure/ai/AIProviderFactory';
 import { AIProviderType } from '../domain/interfaces/IAIProvider';
 
@@ -98,9 +101,7 @@ async function runDetect(options: any): Promise<void> {
     if (result.cycles.length > 0) {
       console.log('');
       console.log(
-        chalk.yellow(
-          `💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`,
-        ),
+        chalk.yellow(`💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`),
       );
       process.exit(1);
     }
@@ -147,7 +148,8 @@ async function runFix(options: any): Promise<void> {
     // Create AI provider if needed
     let aiProvider;
     if (useAI) {
-      const providerType = options.aiProvider === 'openai' ? AIProviderType.OPENAI : AIProviderType.ANTHROPIC;
+      const providerType =
+        options.aiProvider === 'openai' ? AIProviderType.OPENAI : AIProviderType.ANTHROPIC;
 
       if (options.aiKey) {
         aiProvider = AIProviderFactory.create({
@@ -160,7 +162,11 @@ async function runFix(options: any): Promise<void> {
 
       if (!aiProvider.isAvailable()) {
         spinner.warn(chalk.yellow('AI features requested but no API key configured'));
-        console.log(chalk.yellow('Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key'));
+        console.log(
+          chalk.yellow(
+            'Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key',
+          ),
+        );
         console.log('');
         aiProvider = AIProviderFactory.create({ provider: AIProviderType.NONE });
       } else {
@@ -172,9 +178,10 @@ async function runFix(options: any): Promise<void> {
     }
 
     // Choose use case based on AI availability
-    const fixUseCase = useAI && aiProvider.isAvailable()
-      ? new AIEnhancedFixCyclesUseCase(fileSystem, strategies, aiProvider)
-      : new FixCyclesUseCase(fileSystem, strategies);
+    const fixUseCase =
+      useAI && aiProvider.isAvailable()
+        ? new AIEnhancedFixCyclesUseCase(fileSystem, strategies, aiProvider)
+        : new FixCyclesUseCase(fileSystem, strategies);
 
     const fixOptions: AIFixOptions = {
       autoFix: options.auto,

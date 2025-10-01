@@ -112,7 +112,10 @@ export class ExtractSharedStrategy implements IFixStrategy {
     if (isTypeScript) {
       return `/**
  * Shared module to break circular dependency
- * Extracted from: ${cycle.paths.slice(0, -1).map((p) => path.basename(p)).join(', ')}
+ * Extracted from: ${cycle.paths
+   .slice(0, -1)
+   .map((p) => path.basename(p))
+   .join(', ')}
  */
 
 // Move shared types, interfaces, and utility functions here
@@ -122,7 +125,10 @@ export {};
 
     return `/**
  * Shared module to break circular dependency
- * Extracted from: ${cycle.paths.slice(0, -1).map((p) => path.basename(p)).join(', ')}
+ * Extracted from: ${cycle.paths
+   .slice(0, -1)
+   .map((p) => path.basename(p))
+   .join(', ')}
  */
 
 // Move shared functions and constants here

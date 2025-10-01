@@ -108,11 +108,7 @@ export function createAnalyzer(rootDir: string): {
         }
       }
 
-      const fixResults = await fixUseCase.execute(
-        analysisResult.cycles,
-        modules,
-        fullOptions,
-      );
+      const fixResults = await fixUseCase.execute(analysisResult.cycles, modules, fullOptions);
 
       return { analysisResult, fixResults };
     },
