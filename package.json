@@ -1,6 +1,6 @@
 {
   "name": "cyclic-dependency-fixer",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "AI-powered tool to detect and fix circular dependencies in JavaScript/TypeScript projects. Features intelligent refactoring with Claude/GPT-4, codebase pattern learning, and context-aware fix recommendations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,6 +12,42 @@
     "README.md",
     "LICENSE"
   ],
+  "npt": {
+    "examples": [
+      {
+        "command": "cycfix detect",
+        "description": "Detect circular dependencies in current directory"
+      },
+      {
+        "command": "cycfix detect --dir ./src",
+        "description": "Detect circular dependencies in src folder"
+      },
+      {
+        "command": "cycfix detect --dir ./src --extensions .ts,.tsx",
+        "description": "Detect in TypeScript files only"
+      },
+      {
+        "command": "cycfix fix",
+        "description": "Detect and attempt to fix circular dependencies"
+      },
+      {
+        "command": "cycfix fix --dry-run",
+        "description": "Preview fixes without modifying files"
+      },
+      {
+        "command": "cycfix fix --dir ./src --extensions .ts,.tsx",
+        "description": "Fix circular dependencies in TypeScript files"
+      },
+      {
+        "command": "cycfix fix --ai",
+        "description": "Use AI-powered analysis to fix dependencies"
+      },
+      {
+        "command": "cycfix fix --ai --generate-code",
+        "description": "Generate AI-powered refactoring code"
+      }
+    ]
+  },
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc --watch",
