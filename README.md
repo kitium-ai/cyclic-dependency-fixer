@@ -5,8 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)](https://nodejs.org/)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/ashishyd/cyclic-dependency-fixer/pulls)
-[![GitHub stars](https://img.shields.io/github/stars/ashishyd/cyclic-dependency-fixer.svg?style=social)](https://github.com/ashishyd/cyclic-dependency-fixer)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/kitium-ai/cyclic-dependency-fixer/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/kitium-ai/cyclic-dependency-fixer.svg?style=social)](https://github.com/kitium-ai/cyclic-dependency-fixer)
 
 🔄 **Detect and automatically fix cyclic dependencies in JavaScript/TypeScript projects with AI-powered analysis**
 
@@ -499,7 +499,7 @@ Contributions welcome! Please read our [Contributing Guide](CONTRIBUTING.md) fir
 
 ## 📄 License
 
-MIT © [Ashish Yadav](https://github.com/ashishyd)
+MIT © [Ashish Yadav](https://github.com/kitium-ai)
 
 ## 🙏 Acknowledgments
 
@@ -509,10 +509,10 @@ MIT © [Ashish Yadav](https://github.com/ashishyd)
 
 ## 📮 Support
 
-- 🐛 [Report a bug](https://github.com/ashishyd/cyclic-dependency-fixer/issues)
-- 💡 [Request a feature](https://github.com/ashishyd/cyclic-dependency-fixer/issues)
-- 💬 [Discussions](https://github.com/ashishyd/cyclic-dependency-fixer/discussions)
-- ⭐ [Star on GitHub](https://github.com/ashishyd/cyclic-dependency-fixer)
+- 🐛 [Report a bug](https://github.com/kitium-ai/cyclic-dependency-fixer/issues)
+- 💡 [Request a feature](https://github.com/kitium-ai/cyclic-dependency-fixer/issues)
+- 💬 [Discussions](https://github.com/kitium-ai/cyclic-dependency-fixer/discussions)
+- ⭐ [Star on GitHub](https://github.com/kitium-ai/cyclic-dependency-fixer)
 
 ---
 

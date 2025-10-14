@@ -1,0 +1,86 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  title-check:
+    name: Check PR Title
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR title follows conventional commits
+        uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            chore
+            ci
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            The subject should start with an uppercase letter.
+            Example: "feat: Add new feature"
+
+  size-label:
+    name: Label PR Size
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Label PR based on size
+        uses: codelytv/pr-size-labeler@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          xs_label: 'size/xs'
+          xs_max_size: 10
+          s_label: 'size/s'
+          s_max_size: 100
+          m_label: 'size/m'
+          m_max_size: 500
+          l_label: 'size/l'
+          l_max_size: 1000
+          xl_label: 'size/xl'
+          fail_if_xl: false
+          message_if_xl: |
+            This PR is very large. Consider breaking it into smaller PRs for easier review.
+          files_to_ignore: 'package-lock.json dist/**'
+
+  comment-welcome:
+    name: Welcome First Time Contributors
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+
+    steps:
+      - name: Welcome message
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `👋 Welcome to cyclic-dependency-fixer! Thank you for your first contribution!
+              
+              A maintainer will review your PR soon. In the meantime, please make sure:
+              - ✅ Tests pass
+              - ✅ Code follows our style guidelines
+              - ✅ Documentation is updated (if needed)
+              
+              If you have any questions, feel free to ask in the comments or join our [Discussions](https://github.com/kitium-ai/cyclic-dependency-fixer/discussions).
+              
+              Thanks again for contributing! 🎉`
+            })
+

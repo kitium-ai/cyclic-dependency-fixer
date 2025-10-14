@@ -1,0 +1,47 @@
+# Automatically label PRs based on changed files
+
+'documentation':
+  - '**/*.md'
+  - 'docs/**/*'
+
+'dependencies':
+  - 'package.json'
+  - 'package-lock.json'
+  - 'npm-shrinkwrap.json'
+
+'tests':
+  - 'tests/**/*'
+  - '**/*.test.ts'
+  - '**/*.spec.ts'
+
+'CI/CD':
+  - '.github/workflows/**'
+  - '.github/actions/**'
+  - 'jest.config.js'
+  - '.eslintrc.json'
+  - '.prettierrc.json'
+
+'domain':
+  - 'src/domain/**/*'
+
+'application':
+  - 'src/application/**/*'
+
+'infrastructure':
+  - 'src/infrastructure/**/*'
+
+'CLI':
+  - 'src/cli/**/*'
+
+'AI':
+  - 'src/application/ai/**/*'
+  - 'src/infrastructure/ai/**/*'
+  - 'AI_INTEGRATION.md'
+
+'fix-strategies':
+  - 'src/application/fix-strategies/**/*'
+
+'breaking-change':
+  - 'src/domain/interfaces/**/*'
+  - 'src/index.ts'
+

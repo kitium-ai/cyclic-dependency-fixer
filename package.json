@@ -1,5 +1,5 @@
 {
-  "name": "cyclic-dependency-fixer",
+  "name": "@kitiumai/cyclic-dependency-fixer",
   "version": "2.0.1",
   "description": "AI-powered tool to detect and fix circular dependencies in JavaScript/TypeScript projects. Features intelligent refactoring with Claude/GPT-4, codebase pattern learning, and context-aware fix recommendations",
   "main": "dist/index.js",
@@ -115,14 +115,19 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ashishyd/cyclic-dependency-fixer.git"
+    "url": "https://github.com/kitium-ai/cyclic-dependency-fixer.git"
   },
   "bugs": {
-    "url": "https://github.com/ashishyd/cyclic-dependency-fixer/issues"
+    "url": "https://github.com/kitium-ai/cyclic-dependency-fixer/issues"
   },
-  "homepage": "https://github.com/ashishyd/cyclic-dependency-fixer#readme",
+  "homepage": "https://github.com/kitium-ai/cyclic-dependency-fixer#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
