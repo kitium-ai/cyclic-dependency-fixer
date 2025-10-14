@@ -26,15 +26,9 @@ describe('End-to-End Integration Tests', () => {
       const fileA = path.join(tempDir, 'a.ts');
       const fileB = path.join(tempDir, 'b.ts');
 
-      await fs.writeFile(
-        fileA,
-        `import { b } from './b';\nexport const a = 'a' + b;`,
-      );
+      await fs.writeFile(fileA, `import { b } from './b';\nexport const a = 'a' + b;`);
 
-      await fs.writeFile(
-        fileB,
-        `import { a } from './a';\nexport const b = 'b' + a;`,
-      );
+      await fs.writeFile(fileB, `import { a } from './a';\nexport const b = 'b' + a;`);
 
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({});
@@ -83,15 +77,9 @@ describe('End-to-End Integration Tests', () => {
       const fileA = path.join(tempDir, 'a.ts');
       const fileB = path.join(tempDir, 'b.ts');
 
-      await fs.writeFile(
-        fileA,
-        `import { b } from './b';\nexport const a = 'a' + b;`,
-      );
+      await fs.writeFile(fileA, `import { b } from './b';\nexport const a = 'a' + b;`);
 
-      await fs.writeFile(
-        fileB,
-        `import { a } from './a';\nexport const b = 'b' + a;`,
-      );
+      await fs.writeFile(fileB, `import { a } from './a';\nexport const b = 'b' + a;`);
 
       const analyzer = createAnalyzer(tempDir);
       const { analysisResult, fixResults } = await analyzer.fix({}, { dryRun: true });

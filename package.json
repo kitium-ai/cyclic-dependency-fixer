@@ -1,6 +1,6 @@
 {
   "name": "@kitiumai/cyclic-dependency-fixer",
-  "version": "2.0.1",
+  "version": "1.0.0",
   "description": "AI-powered tool to detect and fix circular dependencies in JavaScript/TypeScript projects. Features intelligent refactoring with Claude/GPT-4, codebase pattern learning, and context-aware fix recommendations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
