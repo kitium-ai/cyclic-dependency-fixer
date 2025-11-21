@@ -25,6 +25,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated repository URLs from `ashishyd` to `kitium-ai`
 - Improved documentation structure
 
+## [1.0.1] - 2024-11-21
+
+### Added
+- **npm Lifecycle Hooks** for improved development workflow
+  - `preinstall`: Automatically builds the main package before installation
+  - `postinstall`: Creates npm symlinks for the `@kitiumai/cyclic-dependency-fixer` command
+- Documentation for lifecycle hooks in Development section of README
+
+### Changed
+- Updated development setup process to utilize npm lifecycle hooks
+- Enhanced README with Lifecycle Hooks subsection
+
 ## [2.0.1] - 2024-01-XX
 
 ### Fixed
@@ -122,8 +134,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Keep a Changelog](https://keepachangelog.com/)
 - [Semantic Versioning](https://semver.org/)
 
-[Unreleased]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v0.1.0...v1.0.0
 [2.0.1]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/kitium-ai/cyclic-dependency-fixer/compare/v1.0.0...v2.0.0
-[1.0.0]: https://github.com/kitium-ai/cyclic-dependency-fixer/releases/tag/v1.0.0
+[0.1.0]: https://github.com/kitium-ai/cyclic-dependency-fixer/releases/tag/v0.1.0
 

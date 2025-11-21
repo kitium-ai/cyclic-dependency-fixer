@@ -434,6 +434,8 @@ npm run test:watch    # Watch mode
 
 ## 🔧 Development
 
+### Setup
+
 ```bash
 # Install dependencies
 npm install
@@ -448,6 +450,18 @@ npm run lint:fix
 # Format
 npm run format
 ```
+
+### Lifecycle Hooks
+
+The package includes npm lifecycle hooks to streamline development:
+
+- **preinstall**: Automatically builds the main package before installation
+- **postinstall**: Creates npm symlinks for the `@kitiumai/cyclic-dependency-fixer` command to be available globally in your shell
+
+These hooks ensure that:
+- The TypeScript code is compiled before any installations
+- The `cycfix` command is properly linked and available in your PATH
+- Local development and testing workflows are automated
 
 ## 📚 Advanced Usage
 
