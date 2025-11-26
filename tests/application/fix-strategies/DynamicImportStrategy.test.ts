@@ -2,26 +2,27 @@
  * Unit tests for DynamicImportStrategy
  */
 
+import { beforeEach, describe, expect, it, vi, type Mocked } from 'vitest';
 import { DynamicImportStrategy } from '../../../src/application/fix-strategies/DynamicImportStrategy';
 import { Cycle, CycleEdge, ImportType, FixStrategy } from '../../../src/domain/models/types';
 import { IFileSystem } from '../../../src/domain/interfaces/IFileSystem';
 
 describe('DynamicImportStrategy', () => {
   let strategy: DynamicImportStrategy;
-  let mockFileSystem: jest.Mocked<IFileSystem>;
+  let mockFileSystem: Mocked<IFileSystem>;
 
   beforeEach(() => {
     strategy = new DynamicImportStrategy();
 
     mockFileSystem = {
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
-      exists: jest.fn(),
-      glob: jest.fn(),
-      resolveModule: jest.fn(),
-      getAbsolutePath: jest.fn(),
-      getRelativePath: jest.fn(),
-      backup: jest.fn(),
+      readFile: vi.fn(),
+      writeFile: vi.fn(),
+      exists: vi.fn(),
+      glob: vi.fn(),
+      resolveModule: vi.fn(),
+      getAbsolutePath: vi.fn(),
+      getRelativePath: vi.fn(),
+      backup: vi.fn(),
     };
   });
 

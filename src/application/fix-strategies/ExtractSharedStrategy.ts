@@ -3,15 +3,15 @@
  * Best for: Cycles where modules share common functionality
  */
 
-import { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 import {
-  Cycle,
-  FixResult,
   FixStrategy,
-  ManualStep,
-  Module,
-  ModulePath,
+  type Cycle,
+  type FixResult,
+  type ManualStep,
+  type Module,
+  type ModulePath,
 } from '../../domain/models/types';
 import * as path from 'path';
 
@@ -46,7 +46,7 @@ export class ExtractSharedStrategy implements IFixStrategy {
     cycle: Cycle,
     _modules: ReadonlyMap<ModulePath, Module>,
     fileSystem: IFileSystem,
-    _dryRun: boolean,
+    _dryRun: boolean
   ): Promise<FixResult> {
     try {
       // Determine shared module location

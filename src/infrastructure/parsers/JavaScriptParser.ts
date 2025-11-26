@@ -4,9 +4,14 @@
  */
 
 import * as path from 'path';
-import { IParser } from '../../domain/interfaces/IParser';
-import { Module, ModulePath, ImportInfo, ImportType } from '../../domain/models/types';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { IParser } from '../../domain/interfaces/IParser';
+import {
+  ImportType,
+  type Module,
+  type ModulePath,
+  type ImportInfo,
+} from '../../domain/models/types';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 
 export class JavaScriptParser implements IParser {
   private readonly fileSystem: IFileSystem;
@@ -64,8 +69,8 @@ export class JavaScriptParser implements IParser {
         cleanContent,
         JavaScriptParser.IMPORT_PATTERNS.staticImport,
         ImportType.STATIC,
-        filePath,
-      )),
+        filePath
+      ))
     );
 
     // Extract dynamic imports
@@ -74,8 +79,8 @@ export class JavaScriptParser implements IParser {
         cleanContent,
         JavaScriptParser.IMPORT_PATTERNS.dynamicImport,
         ImportType.DYNAMIC,
-        filePath,
-      )),
+        filePath
+      ))
     );
 
     // Extract require statements
@@ -84,8 +89,8 @@ export class JavaScriptParser implements IParser {
         cleanContent,
         JavaScriptParser.IMPORT_PATTERNS.require,
         ImportType.REQUIRE,
-        filePath,
-      )),
+        filePath
+      ))
     );
 
     // Extract export-from statements
@@ -94,8 +99,8 @@ export class JavaScriptParser implements IParser {
         cleanContent,
         JavaScriptParser.IMPORT_PATTERNS.exportFrom,
         ImportType.EXPORT_FROM,
-        filePath,
-      )),
+        filePath
+      ))
     );
 
     return imports;
@@ -105,7 +110,7 @@ export class JavaScriptParser implements IParser {
     content: string,
     pattern: RegExp,
     type: ImportType,
-    filePath: ModulePath,
+    filePath: ModulePath
   ): Promise<ImportInfo[]> {
     const imports: ImportInfo[] = [];
     const lines = content.split('\n');
@@ -177,7 +182,7 @@ export class JavaScriptParser implements IParser {
         name
           .trim()
           .split(/\s+as\s+/)[0]
-          .trim(),
+          .trim()
       );
       identifiers.push(...names);
     }

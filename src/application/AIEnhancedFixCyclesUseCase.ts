@@ -3,32 +3,32 @@
  * Integrates AI-powered analysis and refactoring generation
  */
 
-import { IFileSystem } from '../domain/interfaces/IFileSystem';
-import { IFixStrategy } from '../domain/interfaces/IFixStrategy';
-import { IAIProvider } from '../domain/interfaces/IAIProvider';
-import { Cycle, FixOptions, FixResult, Module, ModulePath } from '../domain/models/types';
+import type { IFileSystem } from '../domain/interfaces/IFileSystem';
+import type { IFixStrategy } from '../domain/interfaces/IFixStrategy';
+import type { IAIProvider } from '../domain/interfaces/IAIProvider';
+import type { Cycle, FixOptions, FixResult, Module, ModulePath } from '../domain/models/types';
 import { CodebasePatternAnalyzer } from './ai/CodebasePatternAnalyzer';
 import { AIStrategySelector } from './ai/AIStrategySelector';
 import { AIRefactoringGenerator } from './ai/AIRefactoringGenerator';
 
-export interface AIFixOptions extends FixOptions {
+export type AIFixOptions = {
   /** Whether to use AI for strategy selection */
   readonly useAI: boolean;
   /** Whether to generate AI-powered explanations */
   readonly explainWithAI: boolean;
   /** Whether to generate AI code suggestions */
   readonly generateCode: boolean;
-}
+} & FixOptions;
 
 export class AIEnhancedFixCyclesUseCase {
-  private patternAnalyzer: CodebasePatternAnalyzer;
-  private strategySelector: AIStrategySelector;
-  private refactoringGenerator: AIRefactoringGenerator;
+  private readonly patternAnalyzer: CodebasePatternAnalyzer;
+  private readonly strategySelector: AIStrategySelector;
+  private readonly refactoringGenerator: AIRefactoringGenerator;
 
   constructor(
     private readonly fileSystem: IFileSystem,
     private readonly strategies: readonly IFixStrategy[],
-    private readonly aiProvider: IAIProvider,
+    private readonly aiProvider: IAIProvider
   ) {
     this.patternAnalyzer = new CodebasePatternAnalyzer(aiProvider, fileSystem);
     this.strategySelector = new AIStrategySelector(aiProvider, fileSystem);
@@ -38,7 +38,7 @@ export class AIEnhancedFixCyclesUseCase {
   async execute(
     cycles: readonly Cycle[],
     modules: ReadonlyMap<ModulePath, Module>,
-    options: AIFixOptions,
+    options: AIFixOptions
   ): Promise<readonly FixResult[]> {
     const results: FixResult[] = [];
 
@@ -63,7 +63,7 @@ export class AIEnhancedFixCyclesUseCase {
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     options: AIFixOptions,
-    codebaseAnalysis?: any,
+    codebaseAnalysis?: any
   ): Promise<FixResult> {
     // Get AI recommendation if enabled
     let aiRecommendation;
@@ -73,12 +73,12 @@ export class AIEnhancedFixCyclesUseCase {
         cycle,
         modules,
         codebaseAnalysis,
-        this.strategies,
+        this.strategies
       );
 
       if (aiRecommendation) {
         console.log(
-          `   Recommended: ${aiRecommendation.strategy} (${aiRecommendation.confidence}% confidence)`,
+          `   Recommended: ${aiRecommendation.strategy} (${aiRecommendation.confidence}% confidence)`
         );
         console.log(`   Reasoning: ${aiRecommendation.reasoning}`);
       }
@@ -89,7 +89,7 @@ export class AIEnhancedFixCyclesUseCase {
       cycle,
       modules,
       options,
-      aiRecommendation,
+      aiRecommendation
     );
 
     if (applicableStrategies.length === 0) {
@@ -113,7 +113,7 @@ export class AIEnhancedFixCyclesUseCase {
           const aiSteps = await this.refactoringGenerator.generateManualSteps(
             cycle,
             modules,
-            strategy.type,
+            strategy.type
           );
 
           if (aiSteps.length > 0) {
@@ -140,7 +140,7 @@ export class AIEnhancedFixCyclesUseCase {
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     options: AIFixOptions,
-    aiRecommendation?: any,
+    aiRecommendation?: any
   ): Promise<Array<{ strategy: IFixStrategy; score: number }>> {
     const applicable: Array<{ strategy: IFixStrategy; score: number }> = [];
 
@@ -177,7 +177,7 @@ export class AIEnhancedFixCyclesUseCase {
   private async createNoStrategyResult(
     cycle: Cycle,
     options: AIFixOptions,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<FixResult> {
     let manualSteps: any[] = [
       {
@@ -218,7 +218,7 @@ export class AIEnhancedFixCyclesUseCase {
     cycle: Cycle,
     attemptedStrategies: Array<{ strategy: IFixStrategy; score: number }>,
     options: AIFixOptions,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<FixResult> {
     const strategyNames = attemptedStrategies.map((s) => s.strategy.type).join(', ');
 
@@ -234,7 +234,7 @@ export class AIEnhancedFixCyclesUseCase {
       const aiSteps = await this.refactoringGenerator.generateManualSteps(
         cycle,
         modules,
-        attemptedStrategies[0].strategy.type,
+        attemptedStrategies[0].strategy.type
       );
 
       if (aiSteps.length > 0) {

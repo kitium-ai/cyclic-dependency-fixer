@@ -3,7 +3,7 @@
  */
 
 import OpenAI from 'openai';
-import {
+import type {
   IAIProvider,
   AIAnalysisRequest,
   AIAnalysisResponse,
@@ -11,7 +11,7 @@ import {
 
 export class OpenAIProvider implements IAIProvider {
   readonly name = 'OpenAI GPT';
-  private client: OpenAI | null = null;
+  private readonly client: OpenAI | null = null;
 
   constructor(private readonly apiKey?: string) {
     if (this.apiKey) {

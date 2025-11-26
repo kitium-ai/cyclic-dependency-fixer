@@ -38,6 +38,7 @@ export { DynamicImportStrategy } from './application/fix-strategies/DynamicImpor
 export { ExtractSharedStrategy } from './application/fix-strategies/ExtractSharedStrategy';
 
 // Convenience factory
+import type { Result } from '@kitiumai/types';
 import { DetectCyclesUseCase } from './application/DetectCyclesUseCase';
 import { FixCyclesUseCase } from './application/FixCyclesUseCase';
 import { NodeFileSystem } from './infrastructure/filesystem/NodeFileSystem';
@@ -45,14 +46,23 @@ import { JavaScriptParser } from './infrastructure/parsers/JavaScriptParser';
 import { TarjanCycleDetector } from './infrastructure/graph/TarjanCycleDetector';
 import { DynamicImportStrategy } from './application/fix-strategies/DynamicImportStrategy';
 import { ExtractSharedStrategy } from './application/fix-strategies/ExtractSharedStrategy';
-import { AnalysisConfig, FixOptions } from './domain/models/types';
+import type {
+  AnalysisConfig,
+  AnalysisResult,
+  FixOptions,
+  FixResult,
+  Module,
+} from './domain/models/types';
 
 /**
  * Create a default instance with all dependencies configured
  */
 export function createAnalyzer(rootDir: string): {
-  detect: (config: Partial<AnalysisConfig>) => Promise<any>;
-  fix: (config: Partial<AnalysisConfig>, options: Partial<FixOptions>) => Promise<any>;
+  detect: (config?: Partial<AnalysisConfig>) => Promise<Result<AnalysisResult, Error>>;
+  fix: (
+    config?: Partial<AnalysisConfig>,
+    options?: Partial<FixOptions>
+  ) => Promise<Result<{ analysisResult: AnalysisResult; fixResults: readonly FixResult[] }, Error>>;
 } {
   const fileSystem = new NodeFileSystem(rootDir);
   const parser = new JavaScriptParser(fileSystem);
@@ -73,14 +83,31 @@ export function createAnalyzer(rootDir: string): {
         ...config,
       };
 
-      return await detectUseCase.execute(fullConfig);
+      try {
+        const analysisResult = await detectUseCase.execute(fullConfig);
+        return { success: true, data: analysisResult };
+      } catch (error) {
+        return { success: false, error: error as Error };
+      }
     },
 
     async fix(config: Partial<AnalysisConfig> = {}, options: Partial<FixOptions> = {}) {
-      const analysisResult = await this.detect(config);
+      const detection = await this.detect(config);
+
+      if (!detection.success) {
+        return detection;
+      }
+
+      const analysisResult = detection.data;
+      if (!analysisResult) {
+        return {
+          success: false,
+          error: new Error('Failed to analyze dependencies'),
+        };
+      }
 
       if (analysisResult.cycles.length === 0) {
-        return { analysisResult, fixResults: [] };
+        return { success: true, data: { analysisResult, fixResults: [] } };
       }
 
       const fullOptions: FixOptions = {
@@ -92,25 +119,32 @@ export function createAnalyzer(rootDir: string): {
       };
 
       // Build modules map
-      const files = await fileSystem.glob(
-        (config.extensions || ['.js', '.jsx', '.ts', '.tsx']).map((ext) => `*${ext}`),
-        config.exclude || [],
-      );
+      try {
+        const extensions = config.extensions ?? ['.js', '.jsx', '.ts', '.tsx'];
+        const exclude = config.exclude ?? [];
 
-      const modules = new Map();
-      for (const file of files) {
-        try {
-          const content = await fileSystem.readFile(file);
-          const module = await parser.parse(file, content);
-          modules.set(file, module);
-        } catch {
-          // Skip files that fail to parse
+        const files = await fileSystem.glob(
+          extensions.map((ext) => `*${ext}`),
+          exclude
+        );
+
+        const modules = new Map<string, Module>();
+        for (const file of files) {
+          try {
+            const content = await fileSystem.readFile(file);
+            const module = await parser.parse(file, content);
+            modules.set(file, module);
+          } catch {
+            // Skip files that fail to parse
+          }
         }
+
+        const fixResults = await fixUseCase.execute(analysisResult.cycles, modules, fullOptions);
+
+        return { success: true, data: { analysisResult, fixResults } };
+      } catch (error) {
+        return { success: false, error: error as Error };
       }
-
-      const fixResults = await fixUseCase.execute(analysisResult.cycles, modules, fullOptions);
-
-      return { analysisResult, fixResults };
     },
   };
 }

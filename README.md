@@ -36,6 +36,7 @@
 ## ✨ Features
 
 ### Core Features
+
 - 🔍 **Fast Detection** - Uses Tarjan's algorithm for efficient cycle detection (O(V + E))
 - 🛠️ **Auto-Fix Strategies** - Attempts to automatically fix cycles when safe
 - 📝 **Manual Fix Guidance** - Provides clear, actionable steps when auto-fix isn't possible
@@ -46,6 +47,7 @@
 - 🪶 **Lightweight** - Minimal dependencies, uses regex-based parsing
 
 ### 🤖 AI-Powered Features (NEW!)
+
 - **Smart Strategy Selection** - AI analyzes your code and recommends the best fix strategy
 - **Codebase Pattern Learning** - Understands your architecture and coding patterns
 - **Intelligent Refactoring** - Generates production-ready refactoring code
@@ -96,6 +98,7 @@ cycfix fix --ai --explain --generate-code
 ### Why Use AI?
 
 Traditional static analysis can detect cycles but struggles with context. AI understands:
+
 - **Semantic relationships** between modules
 - **Your codebase's architecture** (layered, hexagonal, clean architecture, etc.)
 - **Common patterns** you use (dependency injection, factory pattern, etc.)
@@ -108,6 +111,7 @@ Traditional static analysis can detect cycles but struggles with context. AI und
    - **GPT-4 (OpenAI)**: https://platform.openai.com/api-keys
 
 2. **Set Environment Variable**:
+
    ```bash
    # For Claude (recommended)
    export ANTHROPIC_API_KEY=sk-ant-xxx
@@ -132,6 +136,7 @@ cycfix fix --ai
 ```
 
 **Output:**
+
 ```
 🤖 Analyzing codebase patterns with AI...
    Architecture: Clean Architecture (Layered)
@@ -152,6 +157,7 @@ cycfix fix --ai --generate-code
 ```
 
 **Output:**
+
 ```
 📝 Manual steps to fix:
 
@@ -184,6 +190,7 @@ cycfix fix --ai --explain
 ```
 
 **Output:**
+
 ```
 AI Analysis:
 
@@ -221,13 +228,13 @@ as it aligns with your existing architecture.
 
 ### AI CLI Options
 
-| Option | Description |
-|--------|-------------|
-| `--ai` | Enable AI-powered analysis |
+| Option                     | Description                                                   |
+| -------------------------- | ------------------------------------------------------------- |
+| `--ai`                     | Enable AI-powered analysis                                    |
 | `--ai-provider <provider>` | Choose provider: `anthropic` or `openai` (default: anthropic) |
-| `--ai-key <key>` | Provide API key directly (or use env var) |
-| `--explain` | Generate AI explanations of why cycles exist |
-| `--generate-code` | Generate complete refactoring code with AI |
+| `--ai-key <key>`           | Provide API key directly (or use env var)                     |
+| `--explain`                | Generate AI explanations of why cycles exist                  |
+| `--generate-code`          | Generate complete refactoring code with AI                    |
 
 ### Example Workflow
 
@@ -259,6 +266,7 @@ cycfix detect
 ```
 
 **Options:**
+
 - `-d, --dir <directory>` - Root directory to analyze (default: current directory)
 - `-e, --extensions <extensions>` - File extensions to include (default: .js,.jsx,.ts,.tsx)
 - `-x, --exclude <patterns>` - Patterns to exclude (comma-separated)
@@ -266,6 +274,7 @@ cycfix detect
 - `--max-depth <depth>` - Maximum depth for cycle detection (default: 50)
 
 **Example:**
+
 ```bash
 cycfix detect --dir ./src --extensions .ts,.tsx --exclude tests,__mocks__
 ```
@@ -277,6 +286,7 @@ cycfix fix
 ```
 
 **Options:**
+
 - `-d, --dir <directory>` - Root directory to analyze
 - `-e, --extensions <extensions>` - File extensions to include
 - `-x, --exclude <patterns>` - Patterns to exclude
@@ -285,6 +295,7 @@ cycfix fix
 - `--auto` - Automatically apply fixes without confirmation
 
 **Example:**
+
 ```bash
 cycfix fix --dry-run  # Preview changes
 cycfix fix            # Apply fixes with backups
@@ -298,27 +309,38 @@ import { createAnalyzer } from 'cyclic-dependency-fixer';
 const analyzer = createAnalyzer('./src');
 
 // Detect cycles
-const result = await analyzer.detect({
+const detection = await analyzer.detect({
   extensions: ['.ts', '.tsx'],
   exclude: ['node_modules', 'dist'],
 });
 
-console.log(`Found ${result.cycles.length} cycles`);
+if (!detection.success || !detection.data) {
+  throw detection.error;
+}
+
+console.log(`Found ${detection.data.cycles.length} cycles`);
 
 // Attempt to fix
-const { analysisResult, fixResults } = await analyzer.fix({
-  extensions: ['.ts', '.tsx'],
-}, {
-  dryRun: false,
-  backup: true,
-});
+const fixAttempt = await analyzer.fix(
+  {
+    extensions: ['.ts', '.tsx'],
+  },
+  {
+    dryRun: false,
+    backup: true,
+  },
+);
 
-fixResults.forEach(result => {
+if (!fixAttempt.success || !fixAttempt.data) {
+  throw fixAttempt.error;
+}
+
+fixAttempt.data.fixResults.forEach((result) => {
   if (result.success) {
     console.log(`✓ Fixed ${result.cycle.id}`);
   } else {
     console.log(`⚠ Manual steps required for ${result.cycle.id}`);
-    result.manualSteps?.forEach(step => {
+    result.manualSteps?.forEach((step) => {
       console.log(`  - ${step.description}`);
     });
   }
@@ -334,6 +356,7 @@ Converts static imports to dynamic imports to break the cycle.
 **Best for:** Simple 2-node cycles where lazy loading is acceptable.
 
 **Example:**
+
 ```typescript
 // Before
 import { utils } from './utils';
@@ -349,6 +372,7 @@ Creates a new shared module to hold common code.
 **Best for:** Modules in the same directory sharing common functionality.
 
 **Example:**
+
 ```
 Before: a.ts ↔ b.ts
 After:  a.ts → shared.ts ← b.ts
@@ -473,7 +497,9 @@ class MyCustomStrategy implements IFixStrategy {
 
   async fix(cycle, modules, fileSystem, dryRun) {
     // Implement your fix
-    return { /* FixResult */ };
+    return {
+      /* FixResult */
+    };
   }
 }
 ```

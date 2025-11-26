@@ -3,16 +3,16 @@
  * Follows Clean Architecture and Single Responsibility Principle
  */
 
-import { IFileSystem } from '../domain/interfaces/IFileSystem';
-import { IParser } from '../domain/interfaces/IParser';
-import { ICycleDetector } from '../domain/interfaces/ICycleDetector';
-import { AnalysisConfig, AnalysisResult, Module, ModulePath } from '../domain/models/types';
+import type { IFileSystem } from '../domain/interfaces/IFileSystem';
+import type { IParser } from '../domain/interfaces/IParser';
+import type { ICycleDetector } from '../domain/interfaces/ICycleDetector';
+import type { AnalysisConfig, AnalysisResult, Module, ModulePath } from '../domain/models/types';
 
 export class DetectCyclesUseCase {
   constructor(
     private readonly fileSystem: IFileSystem,
     private readonly parser: IParser,
-    private readonly cycleDetector: ICycleDetector,
+    private readonly cycleDetector: ICycleDetector
   ) {}
 
   async execute(config: AnalysisConfig): Promise<AnalysisResult> {
@@ -51,7 +51,7 @@ export class DetectCyclesUseCase {
   }
 
   private async parseModules(
-    files: readonly ModulePath[],
+    files: readonly ModulePath[]
   ): Promise<ReadonlyMap<ModulePath, Module>> {
     const modules = new Map<ModulePath, Module>();
 
@@ -65,7 +65,7 @@ export class DetectCyclesUseCase {
           // Skip files that fail to parse
           console.warn(`Failed to parse ${file}:`, error);
         }
-      }),
+      })
     );
 
     return modules;

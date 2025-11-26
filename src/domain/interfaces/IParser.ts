@@ -3,9 +3,9 @@
  * Follows Interface Segregation Principle
  */
 
-import { Module, ModulePath } from '../models/types';
+import type { Module, ModulePath } from '../models/types';
 
-export interface IParser {
+export type IParser = {
   /**
    * Parse a source file and extract imports
    */
@@ -15,4 +15,4 @@ export interface IParser {
    * Check if file extension is supported
    */
   supports(extension: string): boolean;
-}
+};

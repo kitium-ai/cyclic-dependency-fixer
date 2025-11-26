@@ -1,7 +1,4 @@
-/**
- * Unit tests for DetectCyclesUseCase
- */
-
+import { beforeEach, describe, expect, it, vi, type Mocked } from 'vitest';
 import { DetectCyclesUseCase } from '../../src/application/DetectCyclesUseCase';
 import { IFileSystem } from '../../src/domain/interfaces/IFileSystem';
 import { IParser } from '../../src/domain/interfaces/IParser';
@@ -10,29 +7,29 @@ import { AnalysisConfig, Module, Cycle, ImportType } from '../../src/domain/mode
 
 describe('DetectCyclesUseCase', () => {
   let useCase: DetectCyclesUseCase;
-  let mockFileSystem: jest.Mocked<IFileSystem>;
-  let mockParser: jest.Mocked<IParser>;
-  let mockCycleDetector: jest.Mocked<ICycleDetector>;
+  let mockFileSystem: Mocked<IFileSystem>;
+  let mockParser: Mocked<IParser>;
+  let mockCycleDetector: Mocked<ICycleDetector>;
 
   beforeEach(() => {
     mockFileSystem = {
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
-      exists: jest.fn(),
-      glob: jest.fn(),
-      resolveModule: jest.fn(),
-      getAbsolutePath: jest.fn(),
-      getRelativePath: jest.fn(),
-      backup: jest.fn(),
+      readFile: vi.fn(),
+      writeFile: vi.fn(),
+      exists: vi.fn(),
+      glob: vi.fn(),
+      resolveModule: vi.fn(),
+      getAbsolutePath: vi.fn(),
+      getRelativePath: vi.fn(),
+      backup: vi.fn(),
     };
 
     mockParser = {
-      parse: jest.fn(),
-      supports: jest.fn(),
+      parse: vi.fn(),
+      supports: vi.fn(),
     };
 
     mockCycleDetector = {
-      detectCycles: jest.fn(),
+      detectCycles: vi.fn(),
     };
 
     useCase = new DetectCyclesUseCase(mockFileSystem, mockParser, mockCycleDetector);

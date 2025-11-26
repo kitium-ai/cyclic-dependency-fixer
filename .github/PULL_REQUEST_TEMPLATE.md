@@ -28,9 +28,9 @@ Related to #
 
 <!-- List the specific changes you made -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 
@@ -47,9 +47,9 @@ Related to #
 
 <!-- Describe manual testing steps if applicable -->
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Screenshots/Examples
 
@@ -57,12 +57,10 @@ Related to #
 
 ```typescript
 // Before
-
 ```
 
 ```typescript
 // After
-
 ```
 
 ## Checklist
@@ -93,12 +91,10 @@ Related to #
 
 ```typescript
 // Old way
-
 ```
 
 ```typescript
 // New way
-
 ```
 
 ## Additional Context
@@ -112,8 +108,8 @@ Related to #
 ---
 
 **For Maintainers:**
+
 - [ ] Documentation updated
 - [ ] Changelog updated
 - [ ] Version bumped (if releasing)
 - [ ] Release notes prepared (if releasing)
-

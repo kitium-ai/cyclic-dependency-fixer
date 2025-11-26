@@ -3,7 +3,7 @@
  */
 
 import Anthropic from '@anthropic-ai/sdk';
-import {
+import type {
   IAIProvider,
   AIAnalysisRequest,
   AIAnalysisResponse,
@@ -11,7 +11,7 @@ import {
 
 export class AnthropicProvider implements IAIProvider {
   readonly name = 'Anthropic Claude';
-  private client: Anthropic | null = null;
+  private readonly client: Anthropic | null = null;
 
   constructor(private readonly apiKey?: string) {
     if (this.apiKey) {

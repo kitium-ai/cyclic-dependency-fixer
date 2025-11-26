@@ -10,7 +10,7 @@ export type ModulePath = string;
 /**
  * Represents an import statement's source
  */
-export interface ImportInfo {
+export type ImportInfo = {
   /** The imported module path (relative or absolute) */
   readonly source: string;
   /** The resolved absolute path of the imported module */
@@ -21,7 +21,7 @@ export interface ImportInfo {
   readonly type: ImportType;
   /** Imported identifiers */
   readonly identifiers: string[];
-}
+};
 
 /**
  * Types of imports supported
@@ -36,7 +36,7 @@ export enum ImportType {
 /**
  * Represents a module in the dependency graph
  */
-export interface Module {
+export type Module = {
   /** Absolute path to the module */
   readonly path: ModulePath;
   /** All imports in this module */
@@ -45,36 +45,36 @@ export interface Module {
   readonly extension: string;
   /** Whether this is a TypeScript file */
   readonly isTypeScript: boolean;
-}
+};
 
 /**
  * Represents a circular dependency cycle
  */
-export interface Cycle {
+export type Cycle = {
   /** Ordered list of module paths forming the cycle */
   readonly paths: readonly ModulePath[];
   /** Import information for each edge in the cycle */
   readonly edges: readonly CycleEdge[];
   /** Unique identifier for this cycle */
   readonly id: string;
-}
+};
 
 /**
  * Represents an edge in a cycle (A imports B)
  */
-export interface CycleEdge {
+export type CycleEdge = {
   /** The importing module */
   readonly from: ModulePath;
   /** The imported module */
   readonly to: ModulePath;
   /** Import details */
   readonly importInfo: ImportInfo;
-}
+};
 
 /**
  * Analysis result containing detected cycles
  */
-export interface AnalysisResult {
+export type AnalysisResult = {
   /** All detected cycles */
   readonly cycles: readonly Cycle[];
   /** Total number of modules analyzed */
@@ -83,12 +83,12 @@ export interface AnalysisResult {
   readonly affectedModules: readonly ModulePath[];
   /** Analysis duration in milliseconds */
   readonly duration: number;
-}
+};
 
 /**
  * Configuration for dependency analysis
  */
-export interface AnalysisConfig {
+export type AnalysisConfig = {
   /** Root directory to analyze */
   readonly rootDir: string;
   /** File extensions to include */
@@ -99,7 +99,7 @@ export interface AnalysisConfig {
   readonly includeNodeModules: boolean;
   /** Maximum depth for cycle detection */
   readonly maxDepth: number;
-}
+};
 
 /**
  * Strategy for fixing a cycle
@@ -120,7 +120,7 @@ export enum FixStrategy {
 /**
  * Result of attempting to fix a cycle
  */
-export interface FixResult {
+export type FixResult = {
   /** The cycle that was fixed */
   readonly cycle: Cycle;
   /** Strategy used for the fix */
@@ -135,12 +135,12 @@ export interface FixResult {
   readonly error?: string;
   /** Manual steps if auto-fix failed */
   readonly manualSteps?: readonly ManualStep[];
-}
+};
 
 /**
  * A manual step to fix a cycle
  */
-export interface ManualStep {
+export type ManualStep = {
   /** Description of the step */
   readonly description: string;
   /** File to modify */
@@ -149,12 +149,12 @@ export interface ManualStep {
   readonly code?: string;
   /** Line number reference */
   readonly line?: number;
-}
+};
 
 /**
  * Options for fix execution
  */
-export interface FixOptions {
+export type FixOptions = {
   /** Whether to apply fixes automatically */
   readonly autoFix: boolean;
   /** Preferred fix strategies (in order) */
@@ -163,4 +163,4 @@ export interface FixOptions {
   readonly backup: boolean;
   /** Dry run mode (don't modify files) */
   readonly dryRun: boolean;
-}
+};

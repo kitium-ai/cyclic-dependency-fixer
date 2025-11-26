@@ -9,11 +9,12 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import * as path from 'path';
+import { compact, unique } from '@kitiumai/utils-ts';
 import { DetectCyclesUseCase } from '../application/DetectCyclesUseCase';
 import { FixCyclesUseCase } from '../application/FixCyclesUseCase';
 import {
   AIEnhancedFixCyclesUseCase,
-  AIFixOptions,
+  type AIFixOptions,
 } from '../application/AIEnhancedFixCyclesUseCase';
 import { NodeFileSystem } from '../infrastructure/filesystem/NodeFileSystem';
 import { JavaScriptParser } from '../infrastructure/parsers/JavaScriptParser';
@@ -21,14 +22,27 @@ import { TarjanCycleDetector } from '../infrastructure/graph/TarjanCycleDetector
 import { DynamicImportStrategy } from '../application/fix-strategies/DynamicImportStrategy';
 import { ExtractSharedStrategy } from '../application/fix-strategies/ExtractSharedStrategy';
 import { ResultFormatter } from './formatters/ResultFormatter';
-import { AnalysisConfig } from '../domain/models/types';
+import type { AnalysisConfig } from '../domain/models/types';
 import { AIProviderFactory } from '../infrastructure/ai/AIProviderFactory';
 import { AIProviderType } from '../domain/interfaces/IAIProvider';
+import { getCycfixLogger } from '../logger';
 
 // Load environment variables
 loadEnv();
 
 const program = new Command();
+const logger = getCycfixLogger('cli');
+
+const DEFAULT_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx'];
+
+function toList(input: string | string[], fallback: readonly string[]): string[] {
+  if (Array.isArray(input)) {
+    return unique(compact(input.map((value) => value.trim())));
+  }
+
+  const source = input?.length ? input : fallback.join(',');
+  return unique(compact(source.split(',').map((value) => value.trim())));
+}
 
 program
   .name('cycfix')
@@ -42,7 +56,7 @@ program
   .option(
     '-e, --extensions <extensions>',
     'File extensions to include (comma-separated)',
-    '.js,.jsx,.ts,.tsx',
+    '.js,.jsx,.ts,.tsx'
   )
   .option('-x, --exclude <patterns>', 'Patterns to exclude (comma-separated)', '')
   .option('--include-node-modules', 'Include node_modules in analysis', false)
@@ -58,7 +72,7 @@ program
   .option(
     '-e, --extensions <extensions>',
     'File extensions to include (comma-separated)',
-    '.js,.jsx,.ts,.tsx',
+    '.js,.jsx,.ts,.tsx'
   )
   .option('-x, --exclude <patterns>', 'Patterns to exclude (comma-separated)', '')
   .option('--dry-run', 'Preview fixes without modifying files', false)
@@ -78,10 +92,20 @@ async function runDetect(options: any): Promise<void> {
 
   try {
     const rootDir = path.resolve(options.dir);
+    const extensions = toList(options.extensions, DEFAULT_EXTENSIONS);
+    const exclude = options.exclude ? toList(options.exclude, []) : [];
+
+    logger.info('Running detect command', {
+      rootDir,
+      extensions,
+      exclude,
+      includeNodeModules: options.includeNodeModules,
+    });
+
     const config: AnalysisConfig = {
       rootDir,
-      extensions: options.extensions.split(',').map((e: string) => e.trim()),
-      exclude: options.exclude ? options.exclude.split(',').map((p: string) => p.trim()) : [],
+      extensions,
+      exclude,
       includeNodeModules: options.includeNodeModules,
       maxDepth: parseInt(options.maxDepth, 10),
     };
@@ -94,6 +118,10 @@ async function runDetect(options: any): Promise<void> {
     const result = await detectUseCase.execute(config);
 
     spinner.stop();
+    logger.info('Analysis finished', {
+      cycles: result.cycles.length,
+      totalModules: result.totalModules,
+    });
 
     const formatter = new ResultFormatter();
     console.log(formatter.formatAnalysisResult(result, rootDir));
@@ -101,12 +129,13 @@ async function runDetect(options: any): Promise<void> {
     if (result.cycles.length > 0) {
       console.log('');
       console.log(
-        chalk.yellow(`💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`),
+        chalk.yellow(`💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`)
       );
       process.exit(1);
     }
   } catch (error) {
     spinner.stop();
+    logger.error('Detect command failed', { error: error as Error });
     console.error(chalk.red('Error:'), (error as Error).message);
     process.exit(1);
   }
@@ -117,10 +146,22 @@ async function runFix(options: any): Promise<void> {
 
   try {
     const rootDir = path.resolve(options.dir);
+    const extensions = toList(options.extensions, DEFAULT_EXTENSIONS);
+    const exclude = options.exclude ? toList(options.exclude, []) : [];
+
+    logger.info('Running fix command', {
+      rootDir,
+      extensions,
+      exclude,
+      dryRun: options.dryRun,
+      auto: options.auto,
+      ai: options.ai,
+    });
+
     const config: AnalysisConfig = {
       rootDir,
-      extensions: options.extensions.split(',').map((e: string) => e.trim()),
-      exclude: options.exclude ? options.exclude.split(',').map((p: string) => p.trim()) : [],
+      extensions,
+      exclude,
       includeNodeModules: false,
       maxDepth: 50,
     };
@@ -164,8 +205,8 @@ async function runFix(options: any): Promise<void> {
         spinner.warn(chalk.yellow('AI features requested but no API key configured'));
         console.log(
           chalk.yellow(
-            'Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key',
-          ),
+            'Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key'
+          )
         );
         console.log('');
         aiProvider = AIProviderFactory.create({ provider: AIProviderType.NONE });
@@ -196,7 +237,7 @@ async function runFix(options: any): Promise<void> {
     const modules = new Map();
     const files = await fileSystem.glob(
       config.extensions.map((ext) => `*${ext}`),
-      config.exclude,
+      config.exclude
     );
 
     for (const file of files) {
@@ -208,6 +249,11 @@ async function runFix(options: any): Promise<void> {
     const fixResults = await fixUseCase.execute(analysisResult.cycles, modules, fixOptions);
 
     spinner.stop();
+    logger.info('Fix command completed', {
+      totalCycles: analysisResult.cycles.length,
+      fixResults: fixResults.length,
+      dryRun: options.dryRun,
+    });
 
     const formatter = new ResultFormatter();
 
@@ -235,6 +281,7 @@ async function runFix(options: any): Promise<void> {
     }
   } catch (error) {
     spinner.stop();
+    logger.error('Fix command failed', { error: error as Error });
     console.error(chalk.red('Error:'), (error as Error).message);
     console.error((error as Error).stack);
     process.exit(1);

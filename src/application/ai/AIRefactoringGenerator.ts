@@ -3,11 +3,17 @@
  * Generates specific refactoring code based on the chosen strategy
  */
 
-import { IAIProvider } from '../../domain/interfaces/IAIProvider';
-import { Cycle, Module, ModulePath, FixStrategy, ManualStep } from '../../domain/models/types';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { IAIProvider } from '../../domain/interfaces/IAIProvider';
+import {
+  FixStrategy,
+  type Cycle,
+  type Module,
+  type ModulePath,
+  type ManualStep,
+} from '../../domain/models/types';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 
-export interface RefactoringCode {
+export type RefactoringCode = {
   /** File path to modify or create */
   readonly filePath: string;
   /** New or modified code content */
@@ -16,9 +22,9 @@ export interface RefactoringCode {
   readonly description: string;
   /** Whether this is a new file */
   readonly isNewFile: boolean;
-}
+};
 
-export interface RefactoringSuggestion {
+export type RefactoringSuggestion = {
   /** Refactoring strategy used */
   readonly strategy: FixStrategy;
   /** Generated code snippets */
@@ -29,18 +35,18 @@ export interface RefactoringSuggestion {
   readonly explanation: string;
   /** Estimated impact level */
   readonly impact: 'low' | 'medium' | 'high';
-}
+};
 
 export class AIRefactoringGenerator {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem,
+    private readonly fileSystem: IFileSystem
   ) {}
 
   async generateRefactoring(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    strategy: FixStrategy,
+    strategy: FixStrategy
   ): Promise<RefactoringSuggestion | null> {
     if (!this.aiProvider.isAvailable()) {
       return null;
@@ -86,7 +92,7 @@ Respond in JSON format:
   async generateManualSteps(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    strategy: FixStrategy,
+    strategy: FixStrategy
   ): Promise<readonly ManualStep[]> {
     const suggestion = await this.generateRefactoring(cycle, modules, strategy);
 
@@ -132,14 +138,16 @@ Provide a clear, concise explanation for developers.`;
 
   private async extractFullCycleCode(
     cycle: Cycle,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<string> {
     const codeSnippets: string[] = [];
     const uniquePaths = cycle.paths.slice(0, -1);
 
     for (const path of uniquePaths) {
       const module = modules.get(path);
-      if (!module) continue;
+      if (!module) {
+        continue;
+      }
 
       try {
         const content = await this.fileSystem.readFile(path);
@@ -200,7 +208,7 @@ Include proper TypeScript types and imports.`;
     lines.push('\nImport chain:');
     cycle.edges.forEach((edge) => {
       lines.push(
-        `  ${edge.from} -> ${edge.to} (line ${edge.importInfo.line}, imports: ${edge.importInfo.identifiers.join(', ')})`,
+        `  ${edge.from} -> ${edge.to} (line ${edge.importInfo.line}, imports: ${edge.importInfo.identifiers.join(', ')})`
       );
     });
 

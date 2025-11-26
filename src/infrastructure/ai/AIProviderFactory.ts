@@ -3,15 +3,15 @@
  * Follows Factory Pattern
  */
 
-import { IAIProvider, AIProviderType } from '../../domain/interfaces/IAIProvider';
+import { AIProviderType, type IAIProvider } from '../../domain/interfaces/IAIProvider';
 import { AnthropicProvider } from './AnthropicProvider';
 import { OpenAIProvider } from './OpenAIProvider';
 import { NoAIProvider } from './NoAIProvider';
 
-export interface AIConfig {
+export type AIConfig = {
   readonly provider: AIProviderType;
   readonly apiKey?: string;
-}
+};
 
 export class AIProviderFactory {
   static create(config: AIConfig): IAIProvider {

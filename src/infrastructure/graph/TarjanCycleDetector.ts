@@ -3,14 +3,14 @@
  * Efficient O(V + E) time complexity
  */
 
-import { ICycleDetector } from '../../domain/interfaces/ICycleDetector';
-import { Cycle, CycleEdge, Module, ModulePath } from '../../domain/models/types';
+import type { ICycleDetector } from '../../domain/interfaces/ICycleDetector';
+import type { Cycle, CycleEdge, Module, ModulePath } from '../../domain/models/types';
 import * as crypto from 'crypto';
 
 export class TarjanCycleDetector implements ICycleDetector {
   async detectCycles(
     modules: ReadonlyMap<ModulePath, Module>,
-    maxDepth: number,
+    maxDepth: number
   ): Promise<readonly Cycle[]> {
     const detector = new TarjanAlgorithm(modules, maxDepth);
     return detector.findCycles();
@@ -131,7 +131,9 @@ class TarjanAlgorithm {
 
     for (const modulePath of scc) {
       const module = this.modules.get(modulePath);
-      if (!module) continue;
+      if (!module) {
+        continue;
+      }
 
       const neighbors = module.imports
         .map((imp) => imp.resolvedPath)

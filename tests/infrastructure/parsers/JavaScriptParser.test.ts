@@ -1,26 +1,29 @@
-/**
- * Unit tests for JavaScriptParser
- */
-
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { JavaScriptParser } from '../../../src/infrastructure/parsers/JavaScriptParser';
 import { IFileSystem } from '../../../src/domain/interfaces/IFileSystem';
 import { ImportType } from '../../../src/domain/models/types';
 
+type MockedFileSystem = {
+  [K in keyof IFileSystem]: IFileSystem[K] extends (...args: infer Args) => infer Return
+    ? vi.Mock<Return, Args>
+    : IFileSystem[K];
+};
+
 describe('JavaScriptParser', () => {
   let parser: JavaScriptParser;
-  let mockFileSystem: jest.Mocked<IFileSystem>;
+  let mockFileSystem: MockedFileSystem;
 
   beforeEach(() => {
     mockFileSystem = {
-      readFile: jest.fn(),
-      writeFile: jest.fn(),
-      exists: jest.fn(),
-      glob: jest.fn(),
-      resolveModule: jest.fn(),
-      getAbsolutePath: jest.fn(),
-      getRelativePath: jest.fn(),
-      backup: jest.fn(),
-    };
+      readFile: vi.fn(),
+      writeFile: vi.fn(),
+      exists: vi.fn(),
+      glob: vi.fn(),
+      resolveModule: vi.fn(),
+      getAbsolutePath: vi.fn(),
+      getRelativePath: vi.fn(),
+      backup: vi.fn(),
+    } as unknown as MockedFileSystem;
 
     parser = new JavaScriptParser(mockFileSystem);
   });

@@ -3,18 +3,18 @@
  * Uses AI to recommend the best strategy for fixing a cycle
  */
 
-import { IAIProvider } from '../../domain/interfaces/IAIProvider';
-import { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
-import {
+import type { IAIProvider } from '../../domain/interfaces/IAIProvider';
+import type { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
+import type {
   Cycle,
   Module,
   ModulePath,
   FixStrategy as FixStrategyEnum,
 } from '../../domain/models/types';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
-import { ArchitectureAnalysis } from './CodebasePatternAnalyzer';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { ArchitectureAnalysis } from './CodebasePatternAnalyzer';
 
-export interface StrategyRecommendation {
+export type StrategyRecommendation = {
   /** Recommended strategy */
   readonly strategy: FixStrategyEnum;
   /** Confidence score (0-100) */
@@ -26,23 +26,23 @@ export interface StrategyRecommendation {
   /** Potential risks */
   readonly risks: readonly string[];
   /** Alternative strategies */
-  readonly alternatives: readonly {
+  readonly alternatives: ReadonlyArray<{
     readonly strategy: FixStrategyEnum;
     readonly confidence: number;
-  }[];
-}
+  }>;
+};
 
 export class AIStrategySelector {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem,
+    private readonly fileSystem: IFileSystem
   ) {}
 
   async recommendStrategy(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     codebaseAnalysis: ArchitectureAnalysis,
-    availableStrategies: readonly IFixStrategy[],
+    availableStrategies: readonly IFixStrategy[]
   ): Promise<StrategyRecommendation | null> {
     if (!this.aiProvider.isAvailable()) {
       return null;
@@ -55,7 +55,7 @@ export class AIStrategySelector {
       cycle,
       cycleCode,
       codebaseAnalysis,
-      availableStrategies,
+      availableStrategies
     );
 
     const response = await this.aiProvider.analyze({
@@ -88,7 +88,7 @@ Respond in JSON format:
 
   private async extractCycleCode(
     cycle: Cycle,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<string> {
     const codeSnippets: string[] = [];
 
@@ -97,7 +97,9 @@ Respond in JSON format:
 
     for (const path of uniquePaths) {
       const module = modules.get(path);
-      if (!module) continue;
+      if (!module) {
+        continue;
+      }
 
       try {
         const content = await this.fileSystem.readFile(path);
@@ -117,7 +119,7 @@ Respond in JSON format:
     cycle: Cycle,
     cycleCode: string,
     codebaseAnalysis: ArchitectureAnalysis,
-    availableStrategies: readonly IFixStrategy[],
+    availableStrategies: readonly IFixStrategy[]
   ): string {
     const cycleDescription = this.describeCycle(cycle);
     const strategyList = availableStrategies.map((s) => s.type).join(', ');

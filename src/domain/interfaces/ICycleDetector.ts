@@ -2,14 +2,14 @@
  * Abstraction for cycle detection algorithms
  */
 
-import { Cycle, Module, ModulePath } from '../models/types';
+import type { Cycle, Module, ModulePath } from '../models/types';
 
-export interface ICycleDetector {
+export type ICycleDetector = {
   /**
    * Detect all cycles in the dependency graph
    */
   detectCycles(
     modules: ReadonlyMap<ModulePath, Module>,
-    maxDepth: number,
+    maxDepth: number
   ): Promise<readonly Cycle[]>;
-}
+};

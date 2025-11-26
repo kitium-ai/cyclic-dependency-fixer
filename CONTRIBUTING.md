@@ -44,6 +44,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Run command '...'
 2. With files '...'
 3. See error
@@ -52,6 +53,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Environment:**
+
 - OS: [e.g. Windows 10, macOS 13.0, Ubuntu 22.04]
 - Node Version: [e.g. 18.16.0]
 - npm Version: [e.g. 9.5.1]
@@ -122,28 +124,33 @@ Unsure where to begin contributing? You can start by looking through these issue
 ### Setup Steps
 
 1. **Fork and Clone**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/cyclic-dependency-fixer.git
    cd cyclic-dependency-fixer
    ```
 
 2. **Install Dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set Up Environment Variables** (for AI features)
+
    ```bash
    cp .env.example .env
    # Edit .env and add your API keys
    ```
 
 4. **Build the Project**
+
    ```bash
    npm run build
    ```
 
 5. **Run Tests**
+
    ```bash
    npm test
    ```
@@ -216,6 +223,7 @@ This project follows **Clean Architecture** principles:
 We use ESLint and Prettier for code style. Configuration is in `.eslintrc.json` and `.prettierrc.json`.
 
 **Key Rules:**
+
 - Use 2 spaces for indentation
 - Use single quotes for strings
 - Always use semicolons
@@ -238,10 +246,11 @@ We use ESLint and Prettier for code style. Configuration is in `.eslintrc.json` 
 - **Type documentation** with TSDoc
 
 **Example:**
+
 ```typescript
 /**
  * Detects circular dependencies in a module graph.
- * 
+ *
  * @param modules - The module graph to analyze
  * @param maxDepth - Maximum depth for cycle detection (default: 50)
  * @returns Analysis result containing detected cycles
@@ -282,10 +291,10 @@ describe('DetectCyclesUseCase', () => {
     it('should detect simple two-node cycle', async () => {
       // Arrange
       mockFileSystem.readFile = jest.fn().mockResolvedValue('...');
-      
+
       // Act
       const result = await useCase.execute({ dir: './test' });
-      
+
       // Assert
       expect(result.cycles).toHaveLength(1);
       expect(result.cycles[0].path).toEqual(['a.ts', 'b.ts', 'a.ts']);
@@ -382,6 +391,7 @@ We follow [Semantic Versioning](https://semver.org/):
 ### Release Steps
 
 1. **Update Version**
+
    ```bash
    npm version [major|minor|patch]
    ```
@@ -391,12 +401,14 @@ We follow [Semantic Versioning](https://semver.org/):
    - Follow [Keep a Changelog](https://keepachangelog.com/) format
 
 3. **Create Release Tag**
+
    ```bash
    git tag -a v2.0.0 -m "Release v2.0.0"
    git push origin v2.0.0
    ```
 
 4. **Publish to npm**
+
    ```bash
    npm publish
    ```
@@ -417,9 +429,9 @@ Don't hesitate to ask! You can:
 ## Recognition
 
 Contributors will be recognized in:
+
 - README.md contributors section
 - Release notes
 - GitHub contributors page
 
 Thank you for contributing! 🎉
-

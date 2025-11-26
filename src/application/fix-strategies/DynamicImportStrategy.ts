@@ -3,16 +3,16 @@
  * Best for: Simple cycles where lazy loading is acceptable
  */
 
-import { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { IFixStrategy } from '../../domain/interfaces/IFixStrategy';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 import {
-  Cycle,
-  FixResult,
   FixStrategy,
   ImportType,
-  ManualStep,
-  Module,
-  ModulePath,
+  type Cycle,
+  type FixResult,
+  type ManualStep,
+  type Module,
+  type ModulePath,
 } from '../../domain/models/types';
 
 export class DynamicImportStrategy implements IFixStrategy {
@@ -39,7 +39,7 @@ export class DynamicImportStrategy implements IFixStrategy {
     cycle: Cycle,
     _modules: ReadonlyMap<ModulePath, Module>,
     fileSystem: IFileSystem,
-    dryRun: boolean,
+    dryRun: boolean
   ): Promise<FixResult> {
     try {
       // Find the best edge to convert to dynamic import
@@ -125,7 +125,7 @@ export class DynamicImportStrategy implements IFixStrategy {
         lines.splice(
           i,
           0,
-          `${indent}const ${identifier} = await import('${source}').then(m => m.default || m);`,
+          `${indent}const ${identifier} = await import('${source}').then(m => m.default || m);`
         );
         break;
       }
@@ -137,7 +137,7 @@ export class DynamicImportStrategy implements IFixStrategy {
   private addDynamicNamedImportUsage(
     lines: string[],
     identifiers: string[],
-    source: string,
+    source: string
   ): string {
     // Similar to above but for named imports
     const firstUsageLine = this.findFirstUsage(lines, identifiers);
@@ -148,7 +148,7 @@ export class DynamicImportStrategy implements IFixStrategy {
       lines.splice(
         firstUsageLine,
         0,
-        `${indent}const { ${imports.join(', ')} } = await import('${source}');`,
+        `${indent}const { ${imports.join(', ')} } = await import('${source}');`
       );
     }
 

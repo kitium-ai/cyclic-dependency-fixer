@@ -3,7 +3,7 @@
  * Follows Dependency Inversion Principle
  */
 
-export interface AIAnalysisRequest {
+export type AIAnalysisRequest = {
   /** The prompt to send to the AI */
   readonly prompt: string;
   /** Maximum tokens for the response */
@@ -12,18 +12,18 @@ export interface AIAnalysisRequest {
   readonly temperature?: number;
   /** System instructions */
   readonly systemPrompt?: string;
-}
+};
 
-export interface AIAnalysisResponse {
+export type AIAnalysisResponse = {
   /** The AI's response text */
   readonly content: string;
   /** Tokens used in the request */
   readonly tokensUsed: number;
   /** Provider that generated the response */
   readonly provider: string;
-}
+};
 
-export interface IAIProvider {
+export type IAIProvider = {
   /**
    * Get the provider name
    */
@@ -43,7 +43,7 @@ export interface IAIProvider {
    * Generate code based on instructions
    */
   generateCode(request: AIAnalysisRequest): Promise<AIAnalysisResponse>;
-}
+};
 
 /**
  * AI provider types

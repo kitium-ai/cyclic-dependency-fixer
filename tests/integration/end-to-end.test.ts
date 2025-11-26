@@ -2,6 +2,7 @@
  * Integration tests for end-to-end scenarios
  */
 
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
@@ -33,9 +34,10 @@ describe('End-to-End Integration Tests', () => {
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({});
 
-      expect(result.cycles).toHaveLength(1);
-      expect(result.cycles[0].paths).toContain(fileA);
-      expect(result.cycles[0].paths).toContain(fileB);
+      expect(result.success).toBe(true);
+      expect(result.data?.cycles).toHaveLength(1);
+      expect(result.data?.cycles[0]?.paths).toContain(fileA);
+      expect(result.data?.cycles[0]?.paths).toContain(fileB);
     });
   });
 
@@ -52,8 +54,9 @@ describe('End-to-End Integration Tests', () => {
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({});
 
-      expect(result.cycles).toHaveLength(1);
-      expect(result.cycles[0].paths.length).toBeGreaterThanOrEqual(3);
+      expect(result.success).toBe(true);
+      expect(result.data?.cycles).toHaveLength(1);
+      expect(result.data?.cycles?.[0]?.paths.length ?? 0).toBeGreaterThanOrEqual(3);
     });
   });
 
@@ -68,7 +71,8 @@ describe('End-to-End Integration Tests', () => {
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({});
 
-      expect(result.cycles).toHaveLength(0);
+      expect(result.success).toBe(true);
+      expect(result.data?.cycles).toHaveLength(0);
     });
   });
 
@@ -82,11 +86,15 @@ describe('End-to-End Integration Tests', () => {
       await fs.writeFile(fileB, `import { a } from './a';\nexport const b = 'b' + a;`);
 
       const analyzer = createAnalyzer(tempDir);
-      const { analysisResult, fixResults } = await analyzer.fix({}, { dryRun: true });
+      const result = await analyzer.fix({}, { dryRun: true });
+      expect(result.success).toBe(true);
 
-      expect(analysisResult.cycles).toHaveLength(1);
+      const analysisResult = result.data?.analysisResult;
+      const fixResults = result.data?.fixResults ?? [];
+
+      expect(analysisResult?.cycles).toHaveLength(1);
       expect(fixResults).toHaveLength(1);
-      expect(fixResults[0].manualSteps || fixResults[0].success).toBeTruthy();
+      expect(fixResults[0]?.manualSteps || fixResults[0]?.success).toBeTruthy();
     });
   });
 
@@ -115,7 +123,8 @@ describe('End-to-End Integration Tests', () => {
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({});
 
-      expect(result.cycles).toHaveLength(2);
+      expect(result.success).toBe(true);
+      expect(result.data?.cycles).toHaveLength(2);
     });
   });
 
@@ -137,7 +146,8 @@ describe('End-to-End Integration Tests', () => {
       const analyzer = createAnalyzer(tempDir);
       const result = await analyzer.detect({ exclude: ['tests'] });
 
-      expect(result.cycles).toHaveLength(0);
+      expect(result.success).toBe(true);
+      expect(result.data?.cycles).toHaveLength(0);
     });
   });
 });

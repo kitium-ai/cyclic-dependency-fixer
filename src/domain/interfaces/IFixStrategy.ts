@@ -3,10 +3,10 @@
  * Follows Strategy Pattern and Open/Closed Principle
  */
 
-import { Cycle, FixResult, FixStrategy, Module, ModulePath } from '../models/types';
-import { IFileSystem } from './IFileSystem';
+import type { Cycle, FixResult, FixStrategy, Module, ModulePath } from '../models/types';
+import type { IFileSystem } from './IFileSystem';
 
-export interface IFixStrategy {
+export type IFixStrategy = {
   /**
    * Get the strategy type
    */
@@ -29,6 +29,6 @@ export interface IFixStrategy {
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     fileSystem: IFileSystem,
-    dryRun: boolean,
+    dryRun: boolean
   ): Promise<FixResult>;
-}
+};

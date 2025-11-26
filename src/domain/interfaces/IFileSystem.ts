@@ -3,9 +3,9 @@
  * Follows Dependency Inversion Principle
  */
 
-import { ModulePath } from '../models/types';
+import type { ModulePath } from '../models/types';
 
-export interface IFileSystem {
+export type IFileSystem = {
   /**
    * Read file contents
    */
@@ -45,4 +45,4 @@ export interface IFileSystem {
    * Create backup of a file
    */
   backup(path: ModulePath): Promise<void>;
-}
+};

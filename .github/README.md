@@ -32,12 +32,14 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Triggers:** Push/PR to `main` or `develop`
 
 **Jobs:**
+
 - **Lint** - ESLint and Prettier checks
 - **Test** - Run tests on multiple OS (Ubuntu, Windows, macOS) and Node versions (16, 18, 20)
 - **Build** - Build TypeScript and verify artifacts
 - **Integration** - Run integration tests
 
 **Status Badge:**
+
 ```markdown
 [![CI](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/ci.yml/badge.svg)](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/ci.yml)
 ```
@@ -47,6 +49,7 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Triggers:** Release created
 
 **Steps:**
+
 1. Run full test suite
 2. Build project
 3. Publish to npm
@@ -55,7 +58,8 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 
 ### CodeQL Security Scan (`codeql.yml`)
 
-**Triggers:** 
+**Triggers:**
+
 - Push/PR to `main` or `develop`
 - Weekly schedule (Mondays at midnight)
 
@@ -66,6 +70,7 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Triggers:** Push/PR to `main`
 
 **Features:**
+
 - Generate coverage report
 - Comment coverage on PRs
 - Check 80% coverage threshold
@@ -76,6 +81,7 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Triggers:** Push tag matching `v*.*.*`
 
 **Automates:**
+
 - Create GitHub release
 - Generate changelog from commits
 - Add installation instructions
@@ -86,6 +92,7 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Schedule:** Daily at midnight
 
 **Configuration:**
+
 - Issues: Stale after 60 days, close after 7 days
 - PRs: Stale after 45 days, close after 14 days
 - Exemptions: `pinned`, `security`, `bug`, `enhancement`
@@ -95,6 +102,7 @@ This directory contains all GitHub-specific configuration for the cyclic-depende
 **Triggers:** PR opened/updated
 
 **Labels based on:**
+
 - Changed file paths
 - File types
 - Directory structure
@@ -106,6 +114,7 @@ See `labeler.yml` for rules.
 **Triggers:** PR opened/updated
 
 **Checks:**
+
 1. **Title Format** - Conventional commits format
 2. **Size Label** - Automatically label PR size (xs/s/m/l/xl)
 3. **Welcome Message** - Greet first-time contributors
@@ -114,28 +123,29 @@ See `labeler.yml` for rules.
 
 ### Auto-Applied Labels
 
-| Label | Applied When |
-|-------|-------------|
-| `documentation` | Changes to `*.md` files or `docs/` |
-| `dependencies` | Changes to `package.json` or lock files |
-| `tests` | Changes to `tests/` or test files |
-| `CI/CD` | Changes to `.github/workflows/` |
-| `domain` | Changes to `src/domain/` |
-| `application` | Changes to `src/application/` |
-| `infrastructure` | Changes to `src/infrastructure/` |
-| `CLI` | Changes to `src/cli/` |
-| `AI` | Changes to AI-related files |
-| `fix-strategies` | Changes to fix strategies |
-| `breaking-change` | Changes to interfaces or public API |
-| `size/xs` | < 10 lines changed |
-| `size/s` | < 100 lines changed |
-| `size/m` | < 500 lines changed |
-| `size/l` | < 1000 lines changed |
-| `size/xl` | > 1000 lines changed |
+| Label             | Applied When                            |
+| ----------------- | --------------------------------------- |
+| `documentation`   | Changes to `*.md` files or `docs/`      |
+| `dependencies`    | Changes to `package.json` or lock files |
+| `tests`           | Changes to `tests/` or test files       |
+| `CI/CD`           | Changes to `.github/workflows/`         |
+| `domain`          | Changes to `src/domain/`                |
+| `application`     | Changes to `src/application/`           |
+| `infrastructure`  | Changes to `src/infrastructure/`        |
+| `CLI`             | Changes to `src/cli/`                   |
+| `AI`              | Changes to AI-related files             |
+| `fix-strategies`  | Changes to fix strategies               |
+| `breaking-change` | Changes to interfaces or public API     |
+| `size/xs`         | < 10 lines changed                      |
+| `size/s`          | < 100 lines changed                     |
+| `size/m`          | < 500 lines changed                     |
+| `size/l`          | < 1000 lines changed                    |
+| `size/xl`         | > 1000 lines changed                    |
 
 ### Manual Labels
 
 Create these labels in GitHub:
+
 - `good-first-issue` - Good for newcomers
 - `help-wanted` - Extra attention needed
 - `question` - Further information requested
@@ -151,6 +161,7 @@ Create these labels in GitHub:
 **Configuration:** `dependabot.yml`
 
 **Features:**
+
 - Weekly dependency updates (Mondays at 9 AM)
 - Separate PRs for npm and GitHub Actions
 - Auto-labeling with `dependencies` and `automated`
@@ -161,6 +172,7 @@ Create these labels in GitHub:
 ### Issue Templates
 
 Located in `ISSUE_TEMPLATE/`:
+
 - **Bug Report** - Report bugs with structured format
 - **Feature Request** - Suggest new features
 - **Config** - Links to discussions for questions
@@ -170,6 +182,7 @@ Located in `ISSUE_TEMPLATE/`:
 Located in `PULL_REQUEST_TEMPLATE.md`
 
 **Sections:**
+
 - Description and type of change
 - Related issues
 - Changes made
@@ -182,10 +195,10 @@ Located in `PULL_REQUEST_TEMPLATE.md`
 
 Add these secrets in repository settings:
 
-| Secret | Purpose | How to Get |
-|--------|---------|------------|
-| `NPM_TOKEN` | Publish to npm | [npm access tokens](https://docs.npmjs.com/creating-and-viewing-access-tokens) |
-| `CODECOV_TOKEN` | Upload coverage | [Codecov](https://codecov.io/) (optional) |
+| Secret          | Purpose         | How to Get                                                                     |
+| --------------- | --------------- | ------------------------------------------------------------------------------ |
+| `NPM_TOKEN`     | Publish to npm  | [npm access tokens](https://docs.npmjs.com/creating-and-viewing-access-tokens) |
+| `CODECOV_TOKEN` | Upload coverage | [Codecov](https://codecov.io/) (optional)                                      |
 
 ## 📊 Status Badges
 
@@ -193,12 +206,15 @@ Add these to your README:
 
 ```markdown
 <!-- CI -->
+
 [![CI](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/ci.yml/badge.svg)](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/ci.yml)
 
 <!-- CodeQL -->
+
 [![CodeQL](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/codeql.yml/badge.svg)](https://github.com/kitium-ai/cyclic-dependency-fixer/actions/workflows/codeql.yml)
 
 <!-- Coverage -->
+
 [![codecov](https://codecov.io/gh/kitium-ai/cyclic-dependency-fixer/branch/main/graph/badge.svg)](https://codecov.io/gh/kitium-ai/cyclic-dependency-fixer)
 ```
 
@@ -207,11 +223,13 @@ Add these to your README:
 ### Creating a Release
 
 1. Update version in `package.json`:
+
    ```bash
    npm version [major|minor|patch]
    ```
 
 2. Push the tag:
+
    ```bash
    git push origin v2.0.0
    ```
@@ -263,8 +281,8 @@ Edit files in `.github/ISSUE_TEMPLATE/`
 For general contribution guidelines, see [CONTRIBUTING.md](../CONTRIBUTING.md) in the root directory.
 
 For GitHub-specific contributions:
+
 - Ensure workflows pass locally if possible
 - Test changes on a fork first
 - Document any new secrets or configurations
 - Update this README if adding new workflows
-

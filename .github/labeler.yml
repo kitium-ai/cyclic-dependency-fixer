@@ -44,4 +44,3 @@
 'breaking-change':
   - 'src/domain/interfaces/**/*'
   - 'src/index.ts'
-

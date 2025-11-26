@@ -4,7 +4,7 @@
 
 import * as path from 'path';
 import chalk from 'chalk';
-import { AnalysisResult, Cycle, FixResult } from '../../domain/models/types';
+import type { AnalysisResult, Cycle, FixResult } from '../../domain/models/types';
 
 export class ResultFormatter {
   formatAnalysisResult(result: AnalysisResult, rootDir: string): string {
@@ -28,8 +28,8 @@ export class ResultFormatter {
     // Cycles found
     lines.push(
       chalk.red(
-        `✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`,
-      ),
+        `✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`
+      )
     );
     lines.push(`Affected modules: ${chalk.yellow(result.affectedModules.length.toString())}`);
     lines.push('');

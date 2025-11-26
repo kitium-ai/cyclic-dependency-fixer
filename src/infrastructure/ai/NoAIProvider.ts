@@ -2,7 +2,7 @@
  * Fallback provider when AI is disabled
  */
 
-import {
+import type {
   IAIProvider,
   AIAnalysisRequest,
   AIAnalysisResponse,

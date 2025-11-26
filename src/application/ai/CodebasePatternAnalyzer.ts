@@ -3,11 +3,11 @@
  * Learns architectural patterns from the codebase
  */
 
-import { IAIProvider } from '../../domain/interfaces/IAIProvider';
-import { Module, ModulePath } from '../../domain/models/types';
-import { IFileSystem } from '../../domain/interfaces/IFileSystem';
+import type { IAIProvider } from '../../domain/interfaces/IAIProvider';
+import type { Module, ModulePath } from '../../domain/models/types';
+import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 
-export interface CodebasePattern {
+export type CodebasePattern = {
   /** Type of pattern detected */
   readonly type: string;
   /** Confidence score (0-100) */
@@ -16,9 +16,9 @@ export interface CodebasePattern {
   readonly description: string;
   /** Examples of where this pattern is used */
   readonly examples: readonly string[];
-}
+};
 
-export interface ArchitectureAnalysis {
+export type ArchitectureAnalysis = {
   /** Detected architectural style */
   readonly architecture: string;
   /** Common patterns found */
@@ -33,16 +33,16 @@ export interface ArchitectureAnalysis {
   };
   /** Common naming conventions */
   readonly namingConventions: readonly string[];
-}
+};
 
 export class CodebasePatternAnalyzer {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem,
+    private readonly fileSystem: IFileSystem
   ) {}
 
   async analyzeArchitecture(
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<ArchitectureAnalysis> {
     if (!this.aiProvider.isAvailable()) {
       return this.createDefaultAnalysis();
@@ -84,7 +84,7 @@ Respond in JSON format with the structure:
   }
 
   async identifyCommonPatterns(
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<readonly CodebasePattern[]> {
     if (!this.aiProvider.isAvailable()) {
       return [];
@@ -129,16 +129,14 @@ Respond in JSON format as an array:
 
   private selectRepresentativeModules(
     modules: ReadonlyMap<ModulePath, Module>,
-    limit: number = 15,
+    limit = 15
   ): readonly Module[] {
     const moduleArray = Array.from(modules.values());
 
     // Filter out test files and node_modules
     const filteredModules = moduleArray.filter(
       (m) =>
-        !m.path.includes('node_modules') &&
-        !m.path.includes('.test.') &&
-        !m.path.includes('.spec.'),
+        !m.path.includes('node_modules') && !m.path.includes('.test.') && !m.path.includes('.spec.')
     );
 
     // Prefer modules with more imports (likely more important)
