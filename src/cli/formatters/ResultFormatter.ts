@@ -5,9 +5,14 @@
 import * as path from 'path';
 import chalk from 'chalk';
 import type { AnalysisResult, Cycle, FixResult } from '../../domain/models/types';
+import type { PolicyViolation } from '../../domain/policy/types';
 
 export class ResultFormatter {
-  formatAnalysisResult(result: AnalysisResult, rootDir: string): string {
+  formatAnalysisResult(
+    result: AnalysisResult,
+    rootDir: string,
+    policyViolations: readonly PolicyViolation[] = []
+  ): string {
     const lines: string[] = [];
 
     lines.push('');
@@ -39,6 +44,28 @@ export class ResultFormatter {
       lines.push(this.formatCycle(cycle, index + 1, rootDir));
       lines.push('');
     });
+
+    if (policyViolations.length > 0) {
+      lines.push(chalk.bold('🚫 Policy Violations'));
+      lines.push(chalk.gray('─'.repeat(50)));
+      lines.push('');
+
+      policyViolations.forEach((violation, index) => {
+        lines.push(
+          `${chalk.yellow(`${index + 1}.`)} ${violation.message} (${violation.severity.toUpperCase()})`
+        );
+
+        if (violation.description) {
+          lines.push(chalk.gray(`   ${violation.description}`));
+        }
+
+        if (violation.recommendedStrategies?.length) {
+          lines.push(
+            chalk.gray(`   Suggested strategies: ${violation.recommendedStrategies.join(', ')}`)
+          );
+        }
+      });
+    }
 
     return lines.join('\n');
   }

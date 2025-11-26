@@ -45,6 +45,8 @@
 - 🔌 **Extensible** - Clean architecture allows custom fix strategies
 - 💪 **Type-Safe** - Written in TypeScript with strict typing
 - 🪶 **Lightweight** - Minimal dependencies, uses regex-based parsing
+- 📄 **Enterprise Reports** - Export JSON or SARIF for CI/CD and audits
+- 🛡️ **Policy Guardrails** - Enforce architectural boundaries before merging
 
 ### 🤖 AI-Powered Features (NEW!)
 
@@ -272,6 +274,9 @@ cycfix detect
 - `-x, --exclude <patterns>` - Patterns to exclude (comma-separated)
 - `--include-node-modules` - Include node_modules in analysis
 - `--max-depth <depth>` - Maximum depth for cycle detection (default: 50)
+- `--config <path>` - Load shared defaults from `cycfix.config.json`
+- `--format <cli|json|sarif>` - Choose human or machine readable output
+- `--output-file <path>` - Write the report to disk instead of stdout
 
 **Example:**
 
@@ -293,6 +298,9 @@ cycfix fix
 - `--dry-run` - Preview fixes without modifying files
 - `--no-backup` - Don't create backup files
 - `--auto` - Automatically apply fixes without confirmation
+- `--config <path>` - Load shared defaults from `cycfix.config.json`
+- `--format <cli|json|sarif>` - Emit CLI-friendly output or JSON/SARIF for CI
+- `--output-file <path>` - Persist the report
 
 **Example:**
 
@@ -301,7 +309,64 @@ cycfix fix --dry-run  # Preview changes
 cycfix fix            # Apply fixes with backups
 ```
 
-### Programmatic API
+## ⚙️ Configuration
+
+Share defaults with your team by checking in a `cycfix.config.json` at the repo root:
+
+```json
+{
+  "analysis": {
+    "extensions": [".ts", ".tsx"],
+    "exclude": ["dist", "coverage"]
+  },
+  "output": {
+    "format": "json",
+    "file": "reports/cycfix-report.json"
+  },
+  "policies": {
+    "failOnSeverity": "warn",
+    "boundaries": [
+      {
+        "name": "domain-to-infra",
+        "from": "src/domain/**",
+        "to": "src/infrastructure/**",
+        "severity": "error",
+        "description": "Domain layer should not depend on infrastructure"
+      }
+    ]
+  }
+}
+```
+
+CLI flags always win, so you can override config values per run (`cycfix detect --format sarif --output-file .reports/cycfix.sarif`).
+
+## 🛡️ Policy Enforcement
+
+Large codebases often need to enforce architectural boundaries (e.g., `domain` cannot import `infrastructure`). Define rules under `policies.boundaries` and cyclic-dependency-fixer will:
+
+- Match edges using glob-style wildcards (`*`, `**`)
+- Annotate reports with the offending imports
+- Fail the command automatically when a violation of the configured severity is detected
+
+You can optionally provide `recommendedStrategies` for each rule to guide reviewers toward the right remediation path.
+
+## 📤 Enterprise Reporting
+
+Need to feed results into GitHub Advanced Security, Azure DevOps, or custom dashboards? Use the structured reporters:
+
+```bash
+cycfix detect --format json --output-file reports/cycfix.json
+cycfix fix --format sarif --output-file reports/cycfix.sarif
+```
+
+- **JSON**: optimized for custom ingestion pipelines
+- **SARIF**: drop directly into GitHub code scanning or Azure DevOps to annotate PRs
+
+## 🧩 Programmatic API
+
+The package exposes a small, focused API for embedding `cyclic-dependency-fixer` into your own tooling.
+
+### Quick Start Example
 
 ```typescript
 import { createAnalyzer } from 'cyclic-dependency-fixer';
@@ -346,6 +411,23 @@ fixAttempt.data.fixResults.forEach((result) => {
   }
 });
 ```
+
+### Public API Surface
+
+From `cyclic-dependency-fixer` you can import:
+
+- **Core types**
+  - `ModulePath`, `Module`, `Cycle`, `AnalysisResult`, `FixResult`, `FixStrategy`, `FixOptions`
+- **Use cases**
+  - `DetectCyclesUseCase`, `FixCyclesUseCase`
+- **Infrastructure defaults**
+  - `NodeFileSystem`, `JavaScriptParser`, `TarjanCycleDetector`
+- **Fix strategies**
+  - `DynamicImportStrategy`, `ExtractSharedStrategy`
+- **Factory**
+  - `createAnalyzer(rootDir: string)` – returns `{ detect, fix }` helpers as used in the example above
+
+These building blocks let you construct custom pipelines (e.g. your own reporters or policy engines) while reusing the same analysis and fixing logic that powers the CLI.
 
 ## 🎯 Fix Strategies
 

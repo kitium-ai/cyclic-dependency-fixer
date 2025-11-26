@@ -51,6 +51,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AI CLI options: `--ai`, `--ai-provider`, `--ai-key`, `--explain`, `--generate-code`
 - Architecture-aware recommendations based on detected codebase patterns
 - Context-aware fix suggestions aligned with existing code style
+- ⚙️ **Shared Configuration**
+  - `cycfix.config.json` / `.cycfixrc.json` support for team-wide defaults
+  - Centralized analysis options (extensions, excludes, depth, node_modules)
+  - Configurable output behavior (format, file path)
+- 🛡️ **Policy Guardrails**
+  - Configurable `policies.boundaries` to enforce architectural rules (e.g. `domain` → `infrastructure`)
+  - Severity-based failures via `policies.failOnSeverity` (`warn` / `error`)
+  - Policy violations annotated alongside cycle information in CLI output
+- 📄 **Enterprise Reporting**
+  - JSON reporter for ingestion into custom dashboards and pipelines
+  - SARIF reporter for GitHub / Azure DevOps code scanning integration
+  - `--format` and `--output-file` CLI flags to control report shape and destination
 
 ### Enhanced
 
@@ -62,6 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Minimum Node.js version: 16.0.0
 - Enhanced error messages with more context
+ - CLI now respects both config file and CLI flags, with flags taking precedence
+ - `detect` / `fix` exit codes consider both cycles and policy violations for CI friendliness
 
 ## [1.0.0] - 2024-01-XX
 
