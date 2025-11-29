@@ -25,6 +25,25 @@ export class ResultFormatter {
     lines.push(`Analysis duration: ${chalk.cyan(result.duration.toString())}ms`);
     lines.push('');
 
+    if (result.isPartial) {
+      lines.push(chalk.yellow('⚠️  Partial results — some files could not be analyzed.'));
+    }
+
+    if (result.warnings?.length) {
+      lines.push(chalk.bold('⚠️ Analysis warnings'));
+      result.warnings.forEach((warning) => {
+        const location = warning.file ? ` (${path.relative(rootDir, warning.file)})` : '';
+        lines.push(chalk.yellow(`- ${warning.message}${location}`));
+      });
+      lines.push('');
+    }
+
+    if (result.metrics) {
+      lines.push(chalk.gray(`Parser: ${result.metrics.parser}`));
+      lines.push(chalk.gray(`Cached modules: ${result.metrics.cachedModules}`));
+      lines.push('');
+    }
+
     if (result.cycles.length === 0) {
       lines.push(chalk.green('✓ No circular dependencies found!'));
       return lines.join('\n');

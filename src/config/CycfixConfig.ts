@@ -18,6 +18,10 @@ export type CycfixConfig = {
     readonly exclude?: readonly string[];
     readonly includeNodeModules?: boolean;
     readonly maxDepth?: number;
+    readonly tsconfigPath?: string;
+    readonly enableCache?: boolean;
+    readonly cacheDir?: string;
+    readonly maxFiles?: number;
   };
   readonly ai?: AiConfig;
   readonly output?: OutputConfig;

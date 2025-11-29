@@ -21,6 +21,7 @@ import { JsonReporter } from './reporters/JsonReporter';
 import { SarifReporter } from './reporters/SarifReporter';
 import { NodeFileSystem } from '../infrastructure/filesystem/NodeFileSystem';
 import { JavaScriptParser } from '../infrastructure/parsers/JavaScriptParser';
+import { TypeScriptProjectParser } from '../infrastructure/parsers/TypeScriptProjectParser';
 import { TarjanCycleDetector } from '../infrastructure/graph/TarjanCycleDetector';
 import { DynamicImportStrategy } from '../application/fix-strategies/DynamicImportStrategy';
 import { ExtractSharedStrategy } from '../application/fix-strategies/ExtractSharedStrategy';
@@ -86,6 +87,10 @@ program
   .option('-x, --exclude <patterns>', 'Patterns to exclude (comma-separated)', '')
   .option('--include-node-modules', 'Include node_modules in analysis', false)
   .option('--max-depth <depth>', 'Maximum depth for cycle detection', '50')
+  .option('--tsconfig <path>', 'Path to tsconfig.json for deterministic graph building')
+  .option('--cache', 'Enable incremental caching between runs')
+  .option('--cache-dir <path>', 'Where to persist analysis cache (defaults to .cycfix-cache)')
+  .option('--max-files <count>', 'Limit the number of files analyzed per run')
   .option('--config <path>', 'Path to cycfix.config.json file')
   .option('--format <format>', 'Report format (cli|json|sarif)', 'cli')
   .option('--output-file <path>', 'Write report to a file instead of stdout')
@@ -106,6 +111,10 @@ program
   .option('--dry-run', 'Preview fixes without modifying files', false)
   .option('--no-backup', 'Do not create backup files', false)
   .option('--auto', 'Automatically apply fixes without confirmation', false)
+  .option('--tsconfig <path>', 'Path to tsconfig.json for deterministic graph building')
+  .option('--cache', 'Enable incremental caching between runs')
+  .option('--cache-dir <path>', 'Where to persist analysis cache (defaults to .cycfix-cache)')
+  .option('--max-files <count>', 'Limit the number of files analyzed per run')
   .option('--ai', 'Use AI-powered analysis and recommendations', false)
   .option('--ai-provider <provider>', 'AI provider (anthropic|openai)', 'anthropic')
   .option('--ai-key <key>', 'AI API key (or set ANTHROPIC_API_KEY/OPENAI_API_KEY env var)', '')
@@ -138,9 +147,10 @@ async function runDetect(options: any): Promise<void> {
     });
 
     const fileSystem = new NodeFileSystem(rootDir);
-    const parser = new JavaScriptParser(fileSystem);
+    const jsParser = new JavaScriptParser(fileSystem);
+    const tsParser = new TypeScriptProjectParser({ projectRoot: rootDir, tsconfigPath: analysisConfig.tsconfigPath });
     const cycleDetector = new TarjanCycleDetector();
-    const detectUseCase = new DetectCyclesUseCase(fileSystem, parser, cycleDetector);
+    const detectUseCase = new DetectCyclesUseCase(fileSystem, tsParser, cycleDetector, jsParser);
 
     const result = await detectUseCase.execute(analysisConfig);
     const policyViolations = new DependencyPolicyEnforcer(policyOptions.rules, rootDir).evaluate(
@@ -196,9 +206,10 @@ async function runFix(options: any): Promise<void> {
     });
 
     const fileSystem = new NodeFileSystem(rootDir);
-    const parser = new JavaScriptParser(fileSystem);
+    const jsParser = new JavaScriptParser(fileSystem);
+    const tsParser = new TypeScriptProjectParser({ projectRoot: rootDir, tsconfigPath: analysisConfig.tsconfigPath });
     const cycleDetector = new TarjanCycleDetector();
-    const detectUseCase = new DetectCyclesUseCase(fileSystem, parser, cycleDetector);
+    const detectUseCase = new DetectCyclesUseCase(fileSystem, tsParser, cycleDetector, jsParser);
 
     spinner.text = 'Detecting cycles...';
     const analysisResult = await detectUseCase.execute(analysisConfig);
@@ -288,7 +299,7 @@ async function runFix(options: any): Promise<void> {
 
     for (const file of files) {
       const content = await fileSystem.readFile(file);
-      const module = await parser.parse(file, content);
+      const module = await tsParser.parse(file, content);
       modules.set(file, module);
     }
 
@@ -359,12 +370,25 @@ function resolveAnalysisConfig(
       ? parseInt(cliOptions.maxDepth, 10)
       : (analysisConfig.maxDepth ?? 50);
 
+  const tsconfigPath = cliOptions.tsconfig ?? analysisConfig.tsconfigPath ?? null;
+  const enableCache =
+    cliOptions.cache !== undefined ? Boolean(cliOptions.cache) : (analysisConfig.enableCache ?? true);
+  const cacheDir = cliOptions.cacheDir ?? analysisConfig.cacheDir ?? path.join(rootDir, '.cycfix-cache');
+  const maxFiles =
+    cliOptions.maxFiles !== undefined
+      ? parseInt(cliOptions.maxFiles, 10)
+      : (analysisConfig.maxFiles ?? null);
+
   return {
     rootDir,
     extensions,
     exclude,
     includeNodeModules,
     maxDepth,
+    tsconfigPath,
+    enableCache,
+    cacheDir,
+    maxFiles,
   };
 }
 

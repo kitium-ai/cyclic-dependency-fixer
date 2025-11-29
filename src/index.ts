@@ -31,6 +31,7 @@ export { FixCyclesUseCase } from './application/FixCyclesUseCase';
 // Infrastructure implementations
 export { NodeFileSystem } from './infrastructure/filesystem/NodeFileSystem';
 export { JavaScriptParser } from './infrastructure/parsers/JavaScriptParser';
+export { TypeScriptProjectParser } from './infrastructure/parsers/TypeScriptProjectParser';
 export { TarjanCycleDetector } from './infrastructure/graph/TarjanCycleDetector';
 
 // Fix strategies
@@ -43,6 +44,7 @@ import { DetectCyclesUseCase } from './application/DetectCyclesUseCase';
 import { FixCyclesUseCase } from './application/FixCyclesUseCase';
 import { NodeFileSystem } from './infrastructure/filesystem/NodeFileSystem';
 import { JavaScriptParser } from './infrastructure/parsers/JavaScriptParser';
+import { TypeScriptProjectParser } from './infrastructure/parsers/TypeScriptProjectParser';
 import { TarjanCycleDetector } from './infrastructure/graph/TarjanCycleDetector';
 import { DynamicImportStrategy } from './application/fix-strategies/DynamicImportStrategy';
 import { ExtractSharedStrategy } from './application/fix-strategies/ExtractSharedStrategy';
@@ -65,9 +67,7 @@ export function createAnalyzer(rootDir: string): {
   ) => Promise<Result<{ analysisResult: AnalysisResult; fixResults: readonly FixResult[] }, Error>>;
 } {
   const fileSystem = new NodeFileSystem(rootDir);
-  const parser = new JavaScriptParser(fileSystem);
   const cycleDetector = new TarjanCycleDetector();
-  const detectUseCase = new DetectCyclesUseCase(fileSystem, parser, cycleDetector);
 
   const strategies = [new DynamicImportStrategy(), new ExtractSharedStrategy()];
   const fixUseCase = new FixCyclesUseCase(fileSystem, strategies);
@@ -80,10 +80,20 @@ export function createAnalyzer(rootDir: string): {
         exclude: [],
         includeNodeModules: false,
         maxDepth: 50,
+        tsconfigPath: null,
+        enableCache: true,
+        cacheDir: `${rootDir}/.cycfix-cache`,
+        maxFiles: null,
         ...config,
       };
 
       try {
+        const jsParser = new JavaScriptParser(fileSystem);
+        const tsParser = new TypeScriptProjectParser({
+          projectRoot: rootDir,
+          tsconfigPath: fullConfig.tsconfigPath ?? null,
+        });
+        const detectUseCase = new DetectCyclesUseCase(fileSystem, tsParser, cycleDetector, jsParser);
         const analysisResult = await detectUseCase.execute(fullConfig);
         return { success: true, data: analysisResult };
       } catch (error) {
@@ -122,6 +132,10 @@ export function createAnalyzer(rootDir: string): {
       try {
         const extensions = config.extensions ?? ['.js', '.jsx', '.ts', '.tsx'];
         const exclude = config.exclude ?? [];
+        const parser = new TypeScriptProjectParser({
+          projectRoot: rootDir,
+          tsconfigPath: config.tsconfigPath ?? null,
+        });
 
         const files = await fileSystem.glob(
           extensions.map((ext) => `*${ext}`),

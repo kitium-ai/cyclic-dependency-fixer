@@ -74,6 +74,20 @@ export type CycleEdge = {
 /**
  * Analysis result containing detected cycles
  */
+export type AnalysisMessage = {
+  readonly message: string;
+  readonly file?: ModulePath;
+  readonly stack?: string;
+};
+
+export type AnalysisMetrics = {
+  readonly filesDiscovered: number;
+  readonly filesAnalyzed: number;
+  readonly cachedModules: number;
+  readonly parser: string;
+  readonly duration: number;
+};
+
 export type AnalysisResult = {
   /** All detected cycles */
   readonly cycles: readonly Cycle[];
@@ -83,6 +97,14 @@ export type AnalysisResult = {
   readonly affectedModules: readonly ModulePath[];
   /** Analysis duration in milliseconds */
   readonly duration: number;
+  /** Non-fatal warnings surfaced during analysis */
+  readonly warnings?: readonly AnalysisMessage[];
+  /** Non-fatal errors that were tolerated (partial results) */
+  readonly errors?: readonly AnalysisMessage[];
+  /** Whether the run returned a degraded but usable result */
+  readonly isPartial?: boolean;
+  /** Additional performance/operability metrics */
+  readonly metrics?: AnalysisMetrics;
 };
 
 /**
@@ -99,6 +121,14 @@ export type AnalysisConfig = {
   readonly includeNodeModules: boolean;
   /** Maximum depth for cycle detection */
   readonly maxDepth: number;
+  /** Optional TypeScript project configuration path for deterministic graphs */
+  readonly tsconfigPath?: string | null;
+  /** Enable incremental caching between runs */
+  readonly enableCache?: boolean;
+  /** Directory to persist cache artefacts */
+  readonly cacheDir?: string | null;
+  /** Maximum files to analyze (guards CI) */
+  readonly maxFiles?: number | null;
 };
 
 /**

@@ -47,6 +47,10 @@
 - 🪶 **Lightweight** - Minimal dependencies, uses regex-based parsing
 - 📄 **Enterprise Reports** - Export JSON or SARIF for CI/CD and audits
 - 🛡️ **Policy Guardrails** - Enforce architectural boundaries before merging
+- 🧭 **Deterministic Graphs** - TypeScript project-aware parsing with `tsconfig` support and path resolution
+- 💾 **Incremental Cache** - Opt-in content-hash cache for stable CI timings and repeated runs
+- 🛟 **Degraded-but-useful Results** - Partial outputs with warning surfacing when some files fail to parse
+- 📈 **Operational Insights** - Metrics in CLI output (parser used, cache hits) for observability
 
 ### 🤖 AI-Powered Features (NEW!)
 
@@ -93,6 +97,19 @@ cycfix fix --ai --generate-code
 
 # Get detailed AI explanations
 cycfix fix --ai --explain --generate-code
+```
+
+### Deterministic & scalable analysis
+
+```bash
+# Honor tsconfig paths/references for stable graphs
+cycfix detect --tsconfig tsconfig.json
+
+# Use incremental cache (content-hash) for faster CI reruns
+cycfix detect --cache --cache-dir .cycfix-cache
+
+# Guardrail safety in huge monorepos
+cycfix detect --max-files 5000 --max-depth 40
 ```
 
 ## 🤖 AI-Powered Features
@@ -554,6 +571,34 @@ npm run lint:fix
 # Format
 npm run format
 ```
+
+## 🧰 API Reference
+
+Programmatic usage with deterministic parsing, caching, and fix orchestration:
+
+```typescript
+import { createAnalyzer, FixStrategy } from 'cyclic-dependency-fixer';
+
+const analyzer = createAnalyzer(process.cwd());
+
+// Detection with tsconfig + cache
+const analysis = await analyzer.detect({
+  tsconfigPath: 'tsconfig.json',
+  enableCache: true,
+  cacheDir: '.cycfix-cache',
+  maxFiles: 10_000,
+});
+
+if (analysis.success && analysis.data.cycles.length > 0) {
+  // Attempt targeted fixes
+  await analyzer.fix(
+    { tsconfigPath: 'tsconfig.json' },
+    { strategies: [FixStrategy.EXTRACT_SHARED], dryRun: true },
+  );
+}
+```
+
+`AnalysisResult` now surfaces `warnings`, `metrics`, and `isPartial` so CI can gate on degraded runs while still consuming SARIF/JSON output.
 
 ## 📚 Advanced Usage
 

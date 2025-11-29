@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Welcome messages for first-time contributors
 - Vitest configuration + setup powered by `@kitiumai/config` and `@kitiumai/vitest-helpers`
 - Shared logger wrapper that forwards to `@kitiumai/logger`
+- Deterministic TypeScript project parser (tsconfig-aware) with JavaScript fallback
+- Incremental analysis cache persisted to `.cycfix-cache` (configurable via CLI/API)
+- CLI options for `--tsconfig`, `--cache`, `--cache-dir`, and `--max-files` to support large monorepos
+- Partial-result surface with warnings/metrics in `AnalysisResult` and CLI output
+- Public API exports for `TypeScriptProjectParser` and cache-aware analyzer examples in README
 
 ### Changed
 
