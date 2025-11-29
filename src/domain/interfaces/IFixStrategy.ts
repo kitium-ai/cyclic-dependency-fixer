@@ -29,6 +29,6 @@ export type IFixStrategy = {
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     fileSystem: IFileSystem,
-    dryRun: boolean,
+    dryRun: boolean
   ): Promise<FixResult>;
 };

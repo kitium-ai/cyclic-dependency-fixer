@@ -10,7 +10,7 @@ import * as crypto from 'crypto';
 export class TarjanCycleDetector implements ICycleDetector {
   async detectCycles(
     modules: ReadonlyMap<ModulePath, Module>,
-    maxDepth: number,
+    maxDepth: number
   ): Promise<readonly Cycle[]> {
     const detector = new TarjanAlgorithm(modules, maxDepth);
     return detector.findCycles();

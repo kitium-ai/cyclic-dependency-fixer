@@ -17,18 +17,11 @@ export class TypeScriptProjectParser implements IParser {
   private readonly compilerOptions: ts.CompilerOptions;
   private readonly host: ts.CompilerHost;
   private readonly projectRoot: string;
-  private readonly tsconfigPath?: string | null;
 
-  private static readonly SUPPORTED_EXTENSIONS = new Set([
-    '.ts',
-    '.tsx',
-    '.js',
-    '.jsx',
-  ]);
+  private static readonly SUPPORTED_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 
   constructor(options: TypeScriptProjectParserOptions) {
     this.projectRoot = options.projectRoot;
-    this.tsconfigPath = options.tsconfigPath;
 
     const { config, basePath } = this.loadTsConfig(options.tsconfigPath);
     this.compilerOptions = config.options;
@@ -50,8 +43,16 @@ export class TypeScriptProjectParser implements IParser {
       if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
         const moduleSpecifier = node.moduleSpecifier?.getText(sourceFile).replace(/['"]/g, '');
         if (moduleSpecifier) {
-          const importInfo = this.createImportInfo(moduleSpecifier, node.getStart(), node, sourceFile, filePath);
-          if (importInfo) imports.push(importInfo);
+          const importInfo = this.createImportInfo(
+            moduleSpecifier,
+            node.getStart(),
+            node,
+            sourceFile,
+            filePath
+          );
+          if (importInfo) {
+            imports.push(importInfo);
+          }
         }
       }
 
@@ -66,9 +67,11 @@ export class TypeScriptProjectParser implements IParser {
               node,
               sourceFile,
               filePath,
-              ImportType.REQUIRE,
+              ImportType.REQUIRE
             );
-            if (importInfo) imports.push(importInfo);
+            if (importInfo) {
+              imports.push(importInfo);
+            }
           }
         }
       }
@@ -82,9 +85,11 @@ export class TypeScriptProjectParser implements IParser {
             node,
             sourceFile,
             filePath,
-            ImportType.DYNAMIC,
+            ImportType.DYNAMIC
           );
-          if (importInfo) imports.push(importInfo);
+          if (importInfo) {
+            imports.push(importInfo);
+          }
         }
       }
 
@@ -110,14 +115,16 @@ export class TypeScriptProjectParser implements IParser {
     node: ts.Node,
     sourceFile: ts.SourceFile,
     filePath: ModulePath,
-    type: ImportType = ImportType.STATIC,
+    type: ImportType = ImportType.STATIC
   ): ImportInfo | null {
     if (!this.isLocalImport(rawSpecifier)) {
       return null;
     }
 
     const resolvedPath = this.resolveImportPath(rawSpecifier, filePath);
-    if (!resolvedPath) return null;
+    if (!resolvedPath) {
+      return null;
+    }
 
     const { line } = sourceFile.getLineAndCharacterOfPosition(start);
     const identifiers = this.extractIdentifiers(node);
@@ -172,8 +179,7 @@ export class TypeScriptProjectParser implements IParser {
       normalizedContaining,
       this.compilerOptions,
       this.host,
-      undefined,
-      this.tsconfigPath ? { traceResolution: false } : undefined,
+      undefined
     );
 
     const resolvedFile = resolution.resolvedModule?.resolvedFileName;
@@ -184,7 +190,10 @@ export class TypeScriptProjectParser implements IParser {
     return null;
   }
 
-  private loadTsConfig(tsconfigPath?: string | null): { config: ts.ParsedCommandLine; basePath: string } {
+  private loadTsConfig(tsconfigPath?: string | null): {
+    config: ts.ParsedCommandLine;
+    basePath: string;
+  } {
     if (!tsconfigPath) {
       return {
         config: ts.parseJsonConfigFileContent({ compilerOptions: {} }, ts.sys, this.projectRoot),

@@ -10,6 +10,6 @@ export type ICycleDetector = {
    */
   detectCycles(
     modules: ReadonlyMap<ModulePath, Module>,
-    maxDepth: number,
+    maxDepth: number
   ): Promise<readonly Cycle[]>;
 };

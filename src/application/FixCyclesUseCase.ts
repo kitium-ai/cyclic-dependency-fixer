@@ -10,13 +10,13 @@ import type { Cycle, FixOptions, FixResult, Module, ModulePath } from '../domain
 export class FixCyclesUseCase {
   constructor(
     private readonly fileSystem: IFileSystem,
-    private readonly strategies: readonly IFixStrategy[],
+    private readonly strategies: readonly IFixStrategy[]
   ) {}
 
   async execute(
     cycles: readonly Cycle[],
     modules: ReadonlyMap<ModulePath, Module>,
-    options: FixOptions,
+    options: FixOptions
   ): Promise<readonly FixResult[]> {
     const results: FixResult[] = [];
 
@@ -31,7 +31,7 @@ export class FixCyclesUseCase {
   private async fixCycle(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    options: FixOptions,
+    options: FixOptions
   ): Promise<FixResult> {
     // Find applicable strategies
     const applicableStrategies = await this.findApplicableStrategies(cycle, modules, options);
@@ -65,7 +65,7 @@ export class FixCyclesUseCase {
   private async findApplicableStrategies(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    options: FixOptions,
+    options: FixOptions
   ): Promise<Array<{ strategy: IFixStrategy; score: number }>> {
     const applicable: Array<{ strategy: IFixStrategy; score: number }> = [];
 
@@ -111,7 +111,7 @@ export class FixCyclesUseCase {
 
   private createFailureResult(
     cycle: Cycle,
-    attemptedStrategies: Array<{ strategy: IFixStrategy; score: number }>,
+    attemptedStrategies: Array<{ strategy: IFixStrategy; score: number }>
   ): FixResult {
     const strategyNames = attemptedStrategies.map((s) => s.strategy.type).join(', ');
 

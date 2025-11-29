@@ -33,7 +33,7 @@ export class NodeFileSystem implements IFileSystem {
 
   async glob(
     patterns: readonly string[],
-    exclude: readonly string[],
+    exclude: readonly string[]
   ): Promise<readonly ModulePath[]> {
     const results: ModulePath[] = [];
     const excludeSet = new Set(exclude);
@@ -108,7 +108,7 @@ export class NodeFileSystem implements IFileSystem {
   private async walkDirectory(
     dir: string,
     pattern: string,
-    exclude: Set<string>,
+    exclude: Set<string>
   ): Promise<ModulePath[]> {
     const results: ModulePath[] = [];
 
