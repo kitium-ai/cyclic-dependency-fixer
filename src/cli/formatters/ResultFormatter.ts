@@ -11,7 +11,7 @@ export class ResultFormatter {
   formatAnalysisResult(
     result: AnalysisResult,
     rootDir: string,
-    policyViolations: readonly PolicyViolation[] = []
+    policyViolations: readonly PolicyViolation[] = [],
   ): string {
     const lines: string[] = [];
 
@@ -33,8 +33,8 @@ export class ResultFormatter {
     // Cycles found
     lines.push(
       chalk.red(
-        `✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`
-      )
+        `✗ Found ${chalk.bold(result.cycles.length.toString())} circular ${result.cycles.length === 1 ? 'dependency' : 'dependencies'}`,
+      ),
     );
     lines.push(`Affected modules: ${chalk.yellow(result.affectedModules.length.toString())}`);
     lines.push('');
@@ -52,7 +52,7 @@ export class ResultFormatter {
 
       policyViolations.forEach((violation, index) => {
         lines.push(
-          `${chalk.yellow(`${index + 1}.`)} ${violation.message} (${violation.severity.toUpperCase()})`
+          `${chalk.yellow(`${index + 1}.`)} ${violation.message} (${violation.severity.toUpperCase()})`,
         );
 
         if (violation.description) {
@@ -61,7 +61,7 @@ export class ResultFormatter {
 
         if (violation.recommendedStrategies?.length) {
           lines.push(
-            chalk.gray(`   Suggested strategies: ${violation.recommendedStrategies.join(', ')}`)
+            chalk.gray(`   Suggested strategies: ${violation.recommendedStrategies.join(', ')}`),
           );
         }
       });

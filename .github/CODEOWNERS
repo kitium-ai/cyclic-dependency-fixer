@@ -1,0 +1,29 @@
+# KitiumAI CODEOWNERS
+# This file defines code owners for different parts of the repository
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything
+* @tech-leads @security-team
+
+# Root and configuration files
+/.github/ @tech-leads @security-team
+/package.json @tech-leads
+/package-lock.json @tech-leads
+/tsconfig*.json @tech-leads
+/.eslintrc* @tech-leads
+/.prettierrc* @tech-leads
+
+# Documentation
+/docs/ @documentation-team
+*.md @documentation-team
+/SECURITY.md @tech-leads @security-team
+/GITHUB_SECURITY.md @tech-leads @security-team
+
+# CI/CD workflows
+/.github/workflows/ @tech-leads @security-team
+
+# Scripts
+/scripts/ @tech-leads
+
+# Dependencies configuration
+/dependabot.yml @tech-leads

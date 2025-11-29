@@ -1,24 +1,21 @@
 import { fileURLToPath } from 'node:url';
-import { baseConfig, nodeConfig, typeScriptConfig } from '@kitiumai/lint/eslint';
+import baseConfig from '@kitiumai/config/eslint.config.base.js';
 
 const tsconfigPath = fileURLToPath(new URL('./tsconfig.eslint.json', import.meta.url));
 const tsconfigRoot = fileURLToPath(new URL('./', import.meta.url));
 
 export default [
+  ...baseConfig,
   {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
-    languageOptions: {
-      parserOptions: {
-        project: tsconfigPath,
-        tsconfigRootDir: tsconfigRoot,
-      },
+    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'prettier.config.*'],
+  },
+  {
+    files: ['prettier.config.cjs'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
-  ...baseConfig,
-  ...nodeConfig,
-  ...typeScriptConfig,
   {
-    name: 'cycfix-overrides',
     files: ['src/**/*.ts'],
     languageOptions: {
       parserOptions: {
@@ -47,7 +44,6 @@ export default [
     },
   },
   {
-    name: 'cycfix-tests',
     files: ['tests/**/*.ts'],
     languageOptions: {
       parserOptions: {

@@ -61,7 +61,7 @@ export function createAnalyzer(rootDir: string): {
   detect: (config?: Partial<AnalysisConfig>) => Promise<Result<AnalysisResult, Error>>;
   fix: (
     config?: Partial<AnalysisConfig>,
-    options?: Partial<FixOptions>
+    options?: Partial<FixOptions>,
   ) => Promise<Result<{ analysisResult: AnalysisResult; fixResults: readonly FixResult[] }, Error>>;
 } {
   const fileSystem = new NodeFileSystem(rootDir);
@@ -125,7 +125,7 @@ export function createAnalyzer(rootDir: string): {
 
         const files = await fileSystem.glob(
           extensions.map((ext) => `*${ext}`),
-          exclude
+          exclude,
         );
 
         const modules = new Map<string, Module>();

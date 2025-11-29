@@ -46,7 +46,7 @@ export class ExtractSharedStrategy implements IFixStrategy {
     cycle: Cycle,
     _modules: ReadonlyMap<ModulePath, Module>,
     fileSystem: IFileSystem,
-    _dryRun: boolean
+    _dryRun: boolean,
   ): Promise<FixResult> {
     try {
       // Determine shared module location

@@ -38,11 +38,11 @@ export type ArchitectureAnalysis = {
 export class CodebasePatternAnalyzer {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem
+    private readonly fileSystem: IFileSystem,
   ) {}
 
   async analyzeArchitecture(
-    modules: ReadonlyMap<ModulePath, Module>
+    modules: ReadonlyMap<ModulePath, Module>,
   ): Promise<ArchitectureAnalysis> {
     if (!this.aiProvider.isAvailable()) {
       return this.createDefaultAnalysis();
@@ -84,7 +84,7 @@ Respond in JSON format with the structure:
   }
 
   async identifyCommonPatterns(
-    modules: ReadonlyMap<ModulePath, Module>
+    modules: ReadonlyMap<ModulePath, Module>,
   ): Promise<readonly CodebasePattern[]> {
     if (!this.aiProvider.isAvailable()) {
       return [];
@@ -129,14 +129,16 @@ Respond in JSON format as an array:
 
   private selectRepresentativeModules(
     modules: ReadonlyMap<ModulePath, Module>,
-    limit = 15
+    limit = 15,
   ): readonly Module[] {
     const moduleArray = Array.from(modules.values());
 
     // Filter out test files and node_modules
     const filteredModules = moduleArray.filter(
       (m) =>
-        !m.path.includes('node_modules') && !m.path.includes('.test.') && !m.path.includes('.spec.')
+        !m.path.includes('node_modules') &&
+        !m.path.includes('.test.') &&
+        !m.path.includes('.spec.'),
     );
 
     // Prefer modules with more imports (likely more important)

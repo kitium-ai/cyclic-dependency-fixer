@@ -8,6 +8,7 @@
     "cycfix": "dist/cli/index.js"
   },
   "type": "module",
+  "sideEffects": false,
   "files": [
     "dist",
     "README.md",
@@ -127,7 +128,7 @@
     "intelligent-refactoring",
     "smart-analysis"
   ],
-  "author": "Ashish Yadav <ashish.yd@gmail.com>",
+  "author": "KitiumAI",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -147,9 +148,9 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
-    "@kitiumai/logger": "1.5.0",
-    "@kitiumai/types": "^1.0.0",
-    "@kitiumai/utils-ts": "^1.0.0",
+    "@kitiumai/logger": "^2.0.0",
+    "@kitiumai/types": "^2.0.0",
+    "@kitiumai/utils-ts": "^2.0.1",
     "chalk": "^5.3.0",
     "commander": "^14.0.2",
     "dotenv": "^17.0.0",
@@ -157,10 +158,10 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
-    "@kitiumai/config": "^1.0.2",
-    "@kitiumai/lint": "^1.3.5",
-    "@kitiumai/scripts": "^0.2.1",
-    "@kitiumai/vitest-helpers": "^1.0.2",
+    "@kitiumai/config": "^2.0.0",
+    "@kitiumai/lint": "^2.0.0",
+    "@kitiumai/scripts": "^1.0.0",
+    "@kitiumai/vitest-helpers": "^2.0.0",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",

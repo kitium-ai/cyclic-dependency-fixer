@@ -12,7 +12,7 @@ export class DetectCyclesUseCase {
   constructor(
     private readonly fileSystem: IFileSystem,
     private readonly parser: IParser,
-    private readonly cycleDetector: ICycleDetector
+    private readonly cycleDetector: ICycleDetector,
   ) {}
 
   async execute(config: AnalysisConfig): Promise<AnalysisResult> {
@@ -51,7 +51,7 @@ export class DetectCyclesUseCase {
   }
 
   private async parseModules(
-    files: readonly ModulePath[]
+    files: readonly ModulePath[],
   ): Promise<ReadonlyMap<ModulePath, Module>> {
     const modules = new Map<ModulePath, Module>();
 
@@ -65,7 +65,7 @@ export class DetectCyclesUseCase {
           // Skip files that fail to parse
           console.warn(`Failed to parse ${file}:`, error);
         }
-      })
+      }),
     );
 
     return modules;

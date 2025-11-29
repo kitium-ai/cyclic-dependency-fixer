@@ -1,6 +1,7 @@
 import path from 'path';
 import {
-  CentralLogger,
+  getLogger,
+  initializeLogger,
   LogLevel,
   type ILogger,
   type LoggerConfig,
@@ -9,7 +10,7 @@ import {
 
 type DeploymentEnvironment = 'development' | 'staging' | 'production';
 
-let cachedLogger: ILogger | null = null;
+let initialized = false;
 
 function resolveEnvironment(value?: string): DeploymentEnvironment {
   switch (value) {
@@ -83,14 +84,15 @@ function createLoggerConfig(): LoggerConfig {
   };
 }
 
-function getBaseLogger(): ILogger {
-  if (!cachedLogger) {
-    cachedLogger = new CentralLogger(createLoggerConfig());
+function ensureLoggerInitialized(): void {
+  if (!initialized) {
+    initializeLogger(createLoggerConfig());
+    initialized = true;
   }
-  return cachedLogger;
 }
 
 export function getCycfixLogger(scope?: string): ILogger {
-  const logger = getBaseLogger();
+  ensureLoggerInitialized();
+  const logger = getLogger();
   return scope ? logger.child({ scope }) : logger;
 }

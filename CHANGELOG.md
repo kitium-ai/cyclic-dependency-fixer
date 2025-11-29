@@ -74,8 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Minimum Node.js version: 16.0.0
 - Enhanced error messages with more context
- - CLI now respects both config file and CLI flags, with flags taking precedence
- - `detect` / `fix` exit codes consider both cycles and policy violations for CI friendliness
+- CLI now respects both config file and CLI flags, with flags taking precedence
+- `detect` / `fix` exit codes consider both cycles and policy violations for CI friendliness
 
 ## [1.0.0] - 2024-01-XX
 
