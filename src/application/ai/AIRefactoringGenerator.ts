@@ -40,13 +40,13 @@ export type RefactoringSuggestion = {
 export class AIRefactoringGenerator {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem,
+    private readonly fileSystem: IFileSystem
   ) {}
 
   async generateRefactoring(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    strategy: FixStrategy,
+    strategy: FixStrategy
   ): Promise<RefactoringSuggestion | null> {
     if (!this.aiProvider.isAvailable()) {
       return null;
@@ -92,7 +92,7 @@ Respond in JSON format:
   async generateManualSteps(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
-    strategy: FixStrategy,
+    strategy: FixStrategy
   ): Promise<readonly ManualStep[]> {
     const suggestion = await this.generateRefactoring(cycle, modules, strategy);
 
@@ -138,7 +138,7 @@ Provide a clear, concise explanation for developers.`;
 
   private async extractFullCycleCode(
     cycle: Cycle,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<string> {
     const codeSnippets: string[] = [];
     const uniquePaths = cycle.paths.slice(0, -1);
@@ -208,7 +208,7 @@ Include proper TypeScript types and imports.`;
     lines.push('\nImport chain:');
     cycle.edges.forEach((edge) => {
       lines.push(
-        `  ${edge.from} -> ${edge.to} (line ${edge.importInfo.line}, imports: ${edge.importInfo.identifiers.join(', ')})`,
+        `  ${edge.from} -> ${edge.to} (line ${edge.importInfo.line}, imports: ${edge.importInfo.identifiers.join(', ')})`
       );
     });
 

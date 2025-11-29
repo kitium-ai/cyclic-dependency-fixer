@@ -82,7 +82,7 @@ program
   .option(
     '-e, --extensions <extensions>',
     'File extensions to include (comma-separated)',
-    '.js,.jsx,.ts,.tsx',
+    '.js,.jsx,.ts,.tsx'
   )
   .option('-x, --exclude <patterns>', 'Patterns to exclude (comma-separated)', '')
   .option('--include-node-modules', 'Include node_modules in analysis', false)
@@ -105,7 +105,7 @@ program
   .option(
     '-e, --extensions <extensions>',
     'File extensions to include (comma-separated)',
-    '.js,.jsx,.ts,.tsx',
+    '.js,.jsx,.ts,.tsx'
   )
   .option('-x, --exclude <patterns>', 'Patterns to exclude (comma-separated)', '')
   .option('--dry-run', 'Preview fixes without modifying files', false)
@@ -148,13 +148,16 @@ async function runDetect(options: any): Promise<void> {
 
     const fileSystem = new NodeFileSystem(rootDir);
     const jsParser = new JavaScriptParser(fileSystem);
-    const tsParser = new TypeScriptProjectParser({ projectRoot: rootDir, tsconfigPath: analysisConfig.tsconfigPath });
+    const tsParser = new TypeScriptProjectParser({
+      projectRoot: rootDir,
+      tsconfigPath: analysisConfig.tsconfigPath,
+    });
     const cycleDetector = new TarjanCycleDetector();
     const detectUseCase = new DetectCyclesUseCase(fileSystem, tsParser, cycleDetector, jsParser);
 
     const result = await detectUseCase.execute(analysisConfig);
     const policyViolations = new DependencyPolicyEnforcer(policyOptions.rules, rootDir).evaluate(
-      result,
+      result
     );
 
     spinner.stop();
@@ -207,14 +210,17 @@ async function runFix(options: any): Promise<void> {
 
     const fileSystem = new NodeFileSystem(rootDir);
     const jsParser = new JavaScriptParser(fileSystem);
-    const tsParser = new TypeScriptProjectParser({ projectRoot: rootDir, tsconfigPath: analysisConfig.tsconfigPath });
+    const tsParser = new TypeScriptProjectParser({
+      projectRoot: rootDir,
+      tsconfigPath: analysisConfig.tsconfigPath,
+    });
     const cycleDetector = new TarjanCycleDetector();
     const detectUseCase = new DetectCyclesUseCase(fileSystem, tsParser, cycleDetector, jsParser);
 
     spinner.text = 'Detecting cycles...';
     const analysisResult = await detectUseCase.execute(analysisConfig);
     const policyViolations = new DependencyPolicyEnforcer(policyOptions.rules, rootDir).evaluate(
-      analysisResult,
+      analysisResult
     );
 
     if (analysisResult.cycles.length === 0) {
@@ -262,8 +268,8 @@ async function runFix(options: any): Promise<void> {
         spinner.warn(chalk.yellow('AI features requested but no API key configured'));
         console.log(
           chalk.yellow(
-            'Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key',
-          ),
+            'Set ANTHROPIC_API_KEY or OPENAI_API_KEY environment variable, or use --ai-key'
+          )
         );
         console.log('');
         aiProvider = AIProviderFactory.create({ provider: AIProviderType.NONE });
@@ -294,7 +300,7 @@ async function runFix(options: any): Promise<void> {
     const modules = new Map();
     const files = await fileSystem.glob(
       analysisConfig.extensions.map((ext) => `*${ext}`),
-      analysisConfig.exclude,
+      analysisConfig.exclude
     );
 
     for (const file of files) {
@@ -340,12 +346,11 @@ program.parse();
 function resolveAnalysisConfig(
   rootDir: string,
   cliOptions: any,
-  config: CycfixConfig | null | undefined,
+  config: CycfixConfig | null | undefined
 ): AnalysisConfig {
   const analysisConfig = config?.analysis ?? {};
 
   const extensions =
-    // eslint-disable-next-line no-nested-ternary
     cliOptions.extensions !== undefined
       ? toList(cliOptions.extensions, DEFAULT_EXTENSIONS)
       : analysisConfig.extensions
@@ -353,7 +358,6 @@ function resolveAnalysisConfig(
         : [...DEFAULT_EXTENSIONS];
 
   const exclude =
-    // eslint-disable-next-line no-nested-ternary
     cliOptions.exclude !== undefined
       ? toList(cliOptions.exclude, [])
       : analysisConfig.exclude
@@ -372,8 +376,11 @@ function resolveAnalysisConfig(
 
   const tsconfigPath = cliOptions.tsconfig ?? analysisConfig.tsconfigPath ?? null;
   const enableCache =
-    cliOptions.cache !== undefined ? Boolean(cliOptions.cache) : (analysisConfig.enableCache ?? true);
-  const cacheDir = cliOptions.cacheDir ?? analysisConfig.cacheDir ?? path.join(rootDir, '.cycfix-cache');
+    cliOptions.cache !== undefined
+      ? Boolean(cliOptions.cache)
+      : (analysisConfig.enableCache ?? true);
+  const cacheDir =
+    cliOptions.cacheDir ?? analysisConfig.cacheDir ?? path.join(rootDir, '.cycfix-cache');
   const maxFiles =
     cliOptions.maxFiles !== undefined
       ? parseInt(cliOptions.maxFiles, 10)
@@ -395,7 +402,7 @@ function resolveAnalysisConfig(
 function resolveOutputOptions(
   cliFormat: string | undefined,
   cliFile: string | undefined,
-  config: CycfixConfig | null | undefined,
+  config: CycfixConfig | null | undefined
 ): OutputOptions {
   const format = ensureFormat(cliFormat ?? config?.output?.format ?? 'cli');
   const file = cliFile ?? config?.output?.file;
@@ -421,7 +428,7 @@ function resolvePolicyOptions(config: CycfixConfig | null | undefined): PolicyOp
 
 function shouldFailForPolicies(
   violations: readonly PolicyViolation[],
-  threshold: PolicySeverity,
+  threshold: PolicySeverity
 ): boolean {
   if (violations.length === 0) {
     return false;
@@ -467,7 +474,7 @@ async function renderDetectOutput({
     if (analysisResult.cycles.length > 0) {
       console.log('');
       console.log(
-        chalk.yellow(`💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`),
+        chalk.yellow(`💡 Tip: Run ${chalk.bold('cycfix fix')} to attempt automatic fixes`)
       );
     }
     return;

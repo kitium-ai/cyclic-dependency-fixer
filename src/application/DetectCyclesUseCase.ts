@@ -21,7 +21,7 @@ export class DetectCyclesUseCase {
     private readonly fileSystem: IFileSystem,
     private readonly parser: IParser,
     private readonly cycleDetector: ICycleDetector,
-    private readonly fallbackParser: IParser | null = null,
+    private readonly fallbackParser: IParser | null = null
   ) {}
 
   async execute(config: AnalysisConfig): Promise<AnalysisResult> {
@@ -70,7 +70,7 @@ export class DetectCyclesUseCase {
           [...modules.entries()].map(([key, module]) => {
             const hash = hashes.get(key) ?? AnalysisCache.hashContent(JSON.stringify(module));
             return [key, { hash, module }];
-          }),
+          })
         ),
       });
     }
@@ -98,8 +98,12 @@ export class DetectCyclesUseCase {
   private async parseModules(
     files: readonly ModulePath[],
     cacheState: Awaited<ReturnType<AnalysisCache['load']>> | undefined,
-    warnings: AnalysisMessage[],
-  ): Promise<{ modules: ReadonlyMap<ModulePath, Module>; cacheHits: number; hashes: Map<string, string> }> {
+    warnings: AnalysisMessage[]
+  ): Promise<{
+    modules: ReadonlyMap<ModulePath, Module>;
+    cacheHits: number;
+    hashes: Map<string, string>;
+  }> {
     const modules = new Map<ModulePath, Module>();
     let cacheHits = 0;
     const hashes = new Map<string, string>();
@@ -119,17 +123,22 @@ export class DetectCyclesUseCase {
           }
 
           const extension = file.split('.').pop() ? `.${file.split('.').pop()}` : '';
-          const parser = this.parser.supports(extension) || !this.fallbackParser
-            ? this.parser
-            : this.fallbackParser;
+          const parser =
+            this.parser.supports(extension) || !this.fallbackParser
+              ? this.parser
+              : this.fallbackParser;
 
           const module = await parser.parse(file, content);
           modules.set(file, { ...module, path: file });
           hashes.set(file, hash);
         } catch (error) {
-          warnings.push({ message: `Failed to parse ${file}`, file, stack: (error as Error).message });
+          warnings.push({
+            message: `Failed to parse ${file}`,
+            file,
+            stack: (error as Error).message,
+          });
         }
-      }),
+      })
     );
 
     return { modules, cacheHits, hashes };

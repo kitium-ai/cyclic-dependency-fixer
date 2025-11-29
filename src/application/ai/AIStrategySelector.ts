@@ -35,14 +35,14 @@ export type StrategyRecommendation = {
 export class AIStrategySelector {
   constructor(
     private readonly aiProvider: IAIProvider,
-    private readonly fileSystem: IFileSystem,
+    private readonly fileSystem: IFileSystem
   ) {}
 
   async recommendStrategy(
     cycle: Cycle,
     modules: ReadonlyMap<ModulePath, Module>,
     codebaseAnalysis: ArchitectureAnalysis,
-    availableStrategies: readonly IFixStrategy[],
+    availableStrategies: readonly IFixStrategy[]
   ): Promise<StrategyRecommendation | null> {
     if (!this.aiProvider.isAvailable()) {
       return null;
@@ -55,7 +55,7 @@ export class AIStrategySelector {
       cycle,
       cycleCode,
       codebaseAnalysis,
-      availableStrategies,
+      availableStrategies
     );
 
     const response = await this.aiProvider.analyze({
@@ -88,7 +88,7 @@ Respond in JSON format:
 
   private async extractCycleCode(
     cycle: Cycle,
-    modules: ReadonlyMap<ModulePath, Module>,
+    modules: ReadonlyMap<ModulePath, Module>
   ): Promise<string> {
     const codeSnippets: string[] = [];
 
@@ -119,7 +119,7 @@ Respond in JSON format:
     cycle: Cycle,
     cycleCode: string,
     codebaseAnalysis: ArchitectureAnalysis,
-    availableStrategies: readonly IFixStrategy[],
+    availableStrategies: readonly IFixStrategy[]
   ): string {
     const cycleDescription = this.describeCycle(cycle);
     const strategyList = availableStrategies.map((s) => s.type).join(', ');
