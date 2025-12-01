@@ -15,8 +15,16 @@ import type {
   ModulePath,
 } from '../domain/models/types';
 import { AnalysisCache } from '../infrastructure/cache/AnalysisCache';
+import { getCycfixLogger } from '../logger';
+import {
+  createParserError,
+  createCacheOperationError,
+  extractErrorMetadata,
+} from '../utils/errors';
 
 export class DetectCyclesUseCase {
+  private readonly logger = getCycfixLogger('detect-cycles');
+
   constructor(
     private readonly fileSystem: IFileSystem,
     private readonly parser: IParser,
@@ -26,6 +34,10 @@ export class DetectCyclesUseCase {
 
   async execute(config: AnalysisConfig): Promise<AnalysisResult> {
     const startTime = Date.now();
+    this.logger.info('Starting cycle detection analysis', {
+      rootDir: config.rootDir,
+      extensions: config.extensions,
+    });
 
     // Step 1: Find all files to analyze
     const files = await this.findFiles(config);
@@ -65,15 +77,33 @@ export class DetectCyclesUseCase {
     };
 
     if (cache) {
-      await cache.save({
-        modules: Object.fromEntries(
-          [...modules.entries()].map(([key, module]) => {
-            const hash = hashes.get(key) ?? AnalysisCache.hashContent(JSON.stringify(module));
-            return [key, { hash, module }];
-          })
-        ),
-      });
+      try {
+        await cache.save({
+          modules: Object.fromEntries(
+            [...modules.entries()].map(([key, module]) => {
+              const hash = hashes.get(key) ?? AnalysisCache.hashContent(JSON.stringify(module));
+              return [key, { hash, module }];
+            })
+          ),
+        });
+      } catch (error) {
+        const cacheError = createCacheOperationError(
+          'save',
+          error instanceof Error ? error.message : String(error),
+          { config: config.cacheDir }
+        );
+        const errorMetadata = extractErrorMetadata(cacheError);
+        this.logger.warn('Failed to save analysis cache', { ...errorMetadata, duration });
+      }
     }
+
+    this.logger.info('Cycle detection analysis completed', {
+      cycles: result.cycles.length,
+      totalModules: result.totalModules,
+      affectedModules: result.affectedModules.length,
+      duration,
+      isPartial: result.isPartial,
+    });
 
     return result;
   }
@@ -107,6 +137,7 @@ export class DetectCyclesUseCase {
     const modules = new Map<ModulePath, Module>();
     let cacheHits = 0;
     const hashes = new Map<string, string>();
+    const parseStartTime = Date.now();
 
     await Promise.all(
       files.map(async (file) => {
@@ -132,14 +163,28 @@ export class DetectCyclesUseCase {
           modules.set(file, { ...module, path: file });
           hashes.set(file, hash);
         } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : String(error);
+          const parserError = createParserError(this.parser.constructor.name, file, errorMsg, {
+            fallbackAvailable: this.fallbackParser !== null,
+          });
+          const errorMetadata = extractErrorMetadata(parserError);
+          this.logger.warn('Failed to parse file', { ...errorMetadata, file });
           warnings.push({
             message: `Failed to parse ${file}`,
             file,
-            stack: (error as Error).message,
+            stack: errorMsg,
           });
         }
       })
     );
+
+    const parseDuration = Date.now() - parseStartTime;
+    this.logger.debug('Module parsing completed', {
+      filesCount: files.length,
+      modulesCount: modules.size,
+      cacheHits,
+      duration: parseDuration,
+    });
 
     return { modules, cacheHits, hashes };
   }

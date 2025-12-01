@@ -4,6 +4,7 @@
 
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { unique } from '@kitiumai/utils-ts';
 import type { ModulePath } from '../../domain/models/types';
 import type { IFileSystem } from '../../domain/interfaces/IFileSystem';
 
@@ -43,7 +44,7 @@ export class NodeFileSystem implements IFileSystem {
       results.push(...files);
     }
 
-    return [...new Set(results)]; // Deduplicate
+    return unique(results);
   }
 
   async resolveModule(from: ModulePath, importPath: string): Promise<ModulePath | null> {

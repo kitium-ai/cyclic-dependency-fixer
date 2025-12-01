@@ -1,6 +1,6 @@
 {
   "name": "@kitiumai/cyclic-dependency-fixer",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "AI-powered tool to detect and fix circular dependencies in JavaScript/TypeScript projects. Features intelligent refactoring with Claude/GPT-4, codebase pattern learning, and context-aware fix recommendations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,6 +9,59 @@
   },
   "type": "module",
   "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./domain": {
+      "types": "./dist/domain/models/types.d.ts",
+      "import": "./dist/domain/models/types.js",
+      "default": "./dist/domain/models/types.js"
+    },
+    "./strategies": {
+      "types": "./dist/application/fix-strategies/index.d.ts",
+      "import": "./dist/application/fix-strategies/index.js",
+      "default": "./dist/application/fix-strategies/index.js"
+    },
+    "./strategies/dynamic-import": {
+      "types": "./dist/application/fix-strategies/DynamicImportStrategy.d.ts",
+      "import": "./dist/application/fix-strategies/DynamicImportStrategy.js",
+      "default": "./dist/application/fix-strategies/DynamicImportStrategy.js"
+    },
+    "./strategies/extract-shared": {
+      "types": "./dist/application/fix-strategies/ExtractSharedStrategy.d.ts",
+      "import": "./dist/application/fix-strategies/ExtractSharedStrategy.js",
+      "default": "./dist/application/fix-strategies/ExtractSharedStrategy.js"
+    },
+    "./parsers": {
+      "types": "./dist/infrastructure/parsers/index.d.ts",
+      "import": "./dist/infrastructure/parsers/index.js",
+      "default": "./dist/infrastructure/parsers/index.js"
+    },
+    "./parsers/javascript": {
+      "types": "./dist/infrastructure/parsers/JavaScriptParser.d.ts",
+      "import": "./dist/infrastructure/parsers/JavaScriptParser.js",
+      "default": "./dist/infrastructure/parsers/JavaScriptParser.js"
+    },
+    "./parsers/typescript": {
+      "types": "./dist/infrastructure/parsers/TypeScriptProjectParser.d.ts",
+      "import": "./dist/infrastructure/parsers/TypeScriptProjectParser.js",
+      "default": "./dist/infrastructure/parsers/TypeScriptProjectParser.js"
+    },
+    "./utils": {
+      "types": "./dist/utils/errors.d.ts",
+      "import": "./dist/utils/errors.js",
+      "default": "./dist/utils/errors.js"
+    },
+    "./ai": {
+      "types": "./dist/application/AIEnhancedFixCyclesUseCase.d.ts",
+      "import": "./dist/application/AIEnhancedFixCyclesUseCase.js",
+      "default": "./dist/application/AIEnhancedFixCyclesUseCase.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
@@ -67,7 +120,7 @@
     "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && npm run lint",
     "changeset": "ensure-changeset && changeset",
     "version": "ensure-changeset && changeset version",
     "publish:set-token": "set-npm-token",
@@ -223,9 +276,10 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
-    "@kitiumai/logger": "^2.0.0",
-    "@kitiumai/types": "^2.0.0",
+    "@kitiumai/logger": "^2.0.1",
+    "@kitiumai/types": "^2.0.1",
     "@kitiumai/utils-ts": "^2.0.1",
+    "@kitiumai/error": "^2.0.1",
     "chalk": "^5.3.0",
     "commander": "^14.0.2",
     "dotenv": "^17.0.0",
@@ -233,10 +287,10 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
-    "@kitiumai/config": "^2.0.0",
-    "@kitiumai/lint": "^2.0.0",
+    "@kitiumai/config": "^2.0.1",
+    "@kitiumai/lint": "^2.0.1",
     "@kitiumai/scripts": "^1.0.0",
-    "@kitiumai/vitest-helpers": "^2.0.0",
+    "@kitiumai/vitest-helpers": "^2.0.1",
     "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",
